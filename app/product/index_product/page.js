@@ -12,6 +12,8 @@ import "react-toastify/dist/ReactToastify.css";
 import UpadteProduct from "@/components/product/UpdateProduct";
 import { IoIosWarning } from "react-icons/io";
 import { FaXmark } from "react-icons/fa6";
+import AddDiscount from "@/components/stock/AddDiscount";
+
 
 const Tableproduct = () => {
 
@@ -123,6 +125,10 @@ useEffect(() => {
       selector: (row) => row.productDate ? row.productDate : "N/A",
     },
     {
+      name: "Discount",
+      selector: (row) => row.discount ? row.discount : "0",
+    },
+    {
         name: "Status",
         cell: (row) => {
           if (row.quantity >= 6) {
@@ -156,6 +162,10 @@ useEffect(() => {
     {
       name: "Add Stock",
       selector: (row) => <AddStockProduct id={row.id} />,
+    },
+    {
+      name: "Discount",
+      selector: (row) => <AddDiscount id={row.id} />,
     },
     {
       name: "Action",

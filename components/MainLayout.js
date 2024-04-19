@@ -11,6 +11,7 @@ import { BiSolidReport } from "react-icons/bi";
 import { MenuContext } from "@/context/MenuContext";
 import { IoLogOut } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
+import { MdOutlineNoteAdd } from "react-icons/md";
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -124,10 +125,10 @@ const MainLayout = ({ children }) => {
             </li>
             <li className="flex items-center gap-[15px] mt-3 cursor-pointer hover:bg-blue-200 hover:text-blue-800 rounded-xl p-2">
               <BiSolidReport className="mr-2" />
-              <Link className=" font-normal flex-1" href="#">
+              <Link className=" font-normal flex-1" href="/report">
                 Reports
               </Link>
-              <MdNavigateNext />
+              {/* <MdNavigateNext /> */}
             </li>
             <li className="flex items-center gap-[15px] mt-3 cursor-pointer hover:bg-blue-200 hover:text-blue-800 rounded-xl p-2">
               <IoLogOut className="mr-2" />

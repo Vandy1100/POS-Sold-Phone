@@ -1,6 +1,7 @@
 import {
   decrementQuantity,
   incrementQuantity,
+  removeAllCart,
   removeFromCart,
   selectCartItems,
   selectFinalPrice,
@@ -9,19 +10,25 @@ import {
 } from "@/store/features/cart/cartSlice";
 import { useGetRequestProductsQuery } from "@/store/features/product/requestProductApi";
 import { useCreateRequestSoldItemMutation } from "@/store/features/soldItem/RequestSoldItemApi";
-import { Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import { Field, Form, Formik, validateYupSchema } from "formik";
+import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Invoice from "./invoice";
+import * as Yup from 'yup';
 const Calu_sale = () => {
   const cartItems = useSelector(selectCartItems);
   const totalPrice = useSelector(selectTotalPrice);
   const totalDiscount = useSelector(selectTotalDiscount);
   const finalPrice = useSelector(selectFinalPrice);
-  console.log(totalPrice);
+  const [isPopupVisible,setIsPopupVisible]=useState(false)
+  const [customerName,setCustomerName] = useState("")
+  const [email,setEmail] = useState("")
+  const [phone,setPhone] = useState("")
+  const [products,setProduct] = useState([])
+  // const [price,setPrice] = useState([])
   // const [quantity, setQuantity] = useState(0); // Initial quantity
   const dispatch = useDispatch();
   const increment = (id) => {
@@ -47,6 +54,7 @@ const Calu_sale = () => {
     }
   };
 
+
   const initialValues = {
     name: "",
     email: "",
@@ -57,6 +65,15 @@ const Calu_sale = () => {
     unitPrice: [],
     userId: [],
   };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().required('Address is required'),
+    phone: Yup.string().required('Phone number is required'),
+    totalAmount: Yup.number().positive('Total amount must be positive').required('Total amount is required'),
+  });
+
+  
 
   cartItems.forEach((item) => {
     initialValues.productId.push(item.id);
@@ -73,6 +90,7 @@ const Calu_sale = () => {
       position: "top-center",
     });
   };
+  
 
   const notifyError = () => {
     toast.success("You not sold your item!!", {
@@ -85,6 +103,22 @@ const Calu_sale = () => {
       },
     });
   };
+  const insufficientError = () => {
+    toast.success("Insufficient stock available for product!!", {
+      theme: "colored",
+      icon: "🚀",
+      autoClose: 1000,
+      position: "top-center",
+      style: {
+        background: "red",
+      },
+    });
+  };
+
+  useEffect(() => {
+    setProduct(cartItems);
+  }, [cartItems]);
+  
   
   const [createSoldItem] = useCreateRequestSoldItemMutation()
 
@@ -114,15 +148,12 @@ const Calu_sale = () => {
       }));
 
       const postData = JSON.stringify({ customerDto, saleDto, saleItemDtos });
-      alert(postData)
       const response = await createSoldItem(postData);
-      console.log("response",response)
-      if (response.data) {
-        // Successful response
+      if (response?.data?.code == '200') {
         notify();
-      } else if (response.error) {
-        // Error response
-        notifyError();
+       
+      }else{
+        insufficientError()
       }
     } catch (error) {
       notifyError();
@@ -137,6 +168,7 @@ const Calu_sale = () => {
         </span>
       </div>
       <Formik
+         validationSchema={validationSchema}
         initialValues={initialValues}
         onSubmit={(values, { setSubmitting, resetForm }) => {
 
@@ -147,7 +179,9 @@ const Calu_sale = () => {
             unitPrice: [],
             userId: [],
           };
-      
+
+    
+          
           // Update the arrays in the new object
           cartItems.forEach((item) => {
             updatedValues.productId.push(item.id);
@@ -166,6 +200,18 @@ const Calu_sale = () => {
             setSubmitting(false);
             postSaleItem(values).then((resp) => {
               console.log("Form values:", values);
+              setCustomerName(values.name)
+              setEmail(values.email)
+              setPhone(values.phone)
+              setIsPopupVisible(true);
+              resetForm({
+                values:{
+                    name:"",
+                    email:"",
+                    phone:"",
+                    totalAmount:0
+                }
+            })
             });
           }, 400);
         }}
@@ -179,13 +225,13 @@ const Calu_sale = () => {
               >
                 <img
                   src={item.image}
-                  className="bg-[#D9D9D9] m-[11px_30px_12px_0] h-[74px] grow basis-[75px]"
+                  className="bg-[#D9D9D9] m-[10px_20px_12px_0] w-20 h-20 grow basis-[75px]"
                 />
                 <div className="m-[5px_79.3px_6px_0] flex flex-col grow basis-[118.7px] box-sizing-border">
-                  <div className="m-[0_0_20px_0] inline-block break-words font-['Hind_Kochi'] font-bold text-[20px] text-[#000000]">
+                  <div className="m-[0_0_20px_0] inline-block break-words font-['Hind_Kochi'] font-semibold text-[16px] text-[#000000]">
                     {item.name}
                   </div>
-                  <span className="m-[0_5px_0_5px] self-start break-words font-['Hind_Kochi'] font-bold text-[20px] text-[#000000]">
+                  <span className="m-[0_5px_0_5px] self-start break-words font-['Hind_Kochi'] font-semibold text-[16px] text-[#000000]">
                     ${item.price}
                   </span>
                 </div>
@@ -284,7 +330,7 @@ const Calu_sale = () => {
               <div className="bg-[#000000] absolute left-[7px] right-[16px] bottom-[39px] h-[1px]"></div>
               <div className="m-[0_0_4px_0] flex flex-row justify-between w-[100%] box-sizing-border">
                 <div className="m-[0_12.5px_3px_0] inline-block w-[367.5px] break-words font-['Hind_Kochi'] font-normal text-[15px] text-[#000000]">
-                  Cash Total :
+                   Sub Total :
                 </div>
                 <div className="relative m-[3px_0_0_0] inline-block break-words font-['Hind_Kochi'] font-medium text-[15px] text-[#000000]">
                   ${(totalPrice || 0).toFixed(2)}
@@ -308,19 +354,19 @@ const Calu_sale = () => {
               </div>
             </div>
             <div className="m-[0_21px_0_23px] flex flex-row justify-between w-[calc(100%_-_44px)] box-sizing-border">
-              <div className="rounded-[5px] bg-[#4557FF] relative m-[1px_0_0_0] flex flex-row justify-center p-[6px_3.3px_3px_0] w-[108px] h-[fit-content] box-sizing-border">
-                <button
-                  type="submit"
-                  className="break-words font-['Hind_Kochi'] font-normal text-[15px] text-[#000000]"
-                >
-                  Payment
-                </button>
+              <div className="">
+              <Invoice
+              name={customerName}
+              email={email}
+              phone={phone}
+              product={products}
+              totalPrice={totalPrice}
+              finalPrice={finalPrice}
+              totalDiscount={totalDiscount}
+            />
+      
               </div>
-              <div className="rounded-[5px] bg-[#E41818] relative m-[0_0_1px_0] flex flex-row justify-center p-[6px_7.1px_3px_0] w-[108px] h-[fit-content] box-sizing-border">
-                <span className="break-words font-['Hind_Kochi'] font-normal text-[15px] text-[#000000]">
-                  Cancel
-                </span>
-              </div>
+
             </div>
           </Form>
         )}

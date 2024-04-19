@@ -10,9 +10,15 @@ export const requestSoldItemApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["requestSoldItem"],
     }),
+    getRequestSaleItems: builder.query({
+      query: () => `/sale_items`,
+      keepUnusedDataFor: 5,
+      providesTags: ["requestSoldItem"],
+    }),
   }),
 });
 
 export const {
     useCreateRequestSoldItemMutation,
+    useGetRequestSaleItemsQuery,
 } = requestSoldItemApiSlice;

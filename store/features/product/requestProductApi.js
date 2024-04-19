@@ -12,6 +12,11 @@ export const requestProductApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
       providesTags: ["requestProduct"],
     }),
+    getRequestProductToSales: builder.query({
+      query: () => `/products/product_sales`,
+      keepUnusedDataFor: 5,
+      providesTags: ["requestProduct"],
+    }),
     getRequestProductById: builder.query({
       query: (id) => `/products/${id}`,
       providesTags: ["requestProduct"],
@@ -40,6 +45,14 @@ export const requestProductApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["requestProduct"],
     }),
+    updateRequestDiscount: builder.mutation({
+      query: ({ id, discount }) => ({
+        url: `products/discount/${id}`,
+        method: "PUT",
+        body: discount , 
+      }),
+      invalidatesTags: ["requestProduct"],
+    }),    
     deleteRequestProduct: builder.mutation({
       query: (id) => ({
         url: `/products/${id}`,
@@ -61,8 +74,10 @@ export const {
   useUpdateRequestProductMutation,
   useGetRequestProductsQuery,
   useGetRequestProductStocksQuery,
+  useGetRequestProductToSalesQuery,
   useGetRequestProductByIdQuery,
   useDeleteRequestProductMutation,
+  useUpdateRequestDiscountMutation,
   //   useGetRequestSubjectClientByRouteQuery,
   useCreateRequestProductMutation,
   useCreateRequestAddStockProductMutation,

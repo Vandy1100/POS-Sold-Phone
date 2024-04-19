@@ -6,9 +6,9 @@ import Calu_sale from './add_sale/calu_sale';
 const Sale = () => {
     return (
         <div>
-            <div className="flex gap-1 mt-2 ml-3">
+            <div className="flex gap-3 mt-2">
                 <div>
-                    <div className="mt-2 ml-2">
+                    <div className="mt-1 ml-1">
                         <Add_sale />
                     </div>
                 </div>

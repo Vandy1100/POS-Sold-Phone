@@ -1,17 +1,19 @@
 "use client";
 import { addToCart } from "@/store/features/cart/cartSlice";
-import { useGetRequestProductsQuery } from "@/store/features/product/requestProductApi";
-import React from "react";
+import { useGetRequestProductToSalesQuery } from "@/store/features/product/requestProductApi";
+import React, { useEffect, useState } from "react";
 import { BsCartFill } from "react-icons/bs";
 import { FaCartShopping } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
-
+import style from "./saleitem.module.css"
 const Add_sale = () => {
+  const [search,setSearch] = useState()
+  const [productItem,setProductItem] = useState()
   const {
     data: product,
     isLoading: productLoading,
     error: productError,
-  } = useGetRequestProductsQuery();
+  } = useGetRequestProductToSalesQuery();
 
 
 
@@ -27,34 +29,99 @@ const Add_sale = () => {
     }
   };
 
+  const handleSearch =(event)=>{
+    setSearch(event.target.value)
+  }
+ // Filter sale items based on start and end dates
+ useEffect(() => {
+  if (product && product.data) {
+    const filteredItems = product.data.filter(item => {
+      if (search) {
+        // Convert both item name and search term to lowercase for case-insensitive comparison
+        const itemName = item.name.toLowerCase();
+        const searchTerm = search.toLowerCase();
+        return itemName.includes(searchTerm);
+      }
+      return true;
+    });
+    setProductItem(filteredItems);
+  }
+}, [product, search]);
+
+
+
 
   
   
   return (
     <div className="container">
-      <div className="bg-[#D9D9D9] w-[100%] h-auto p-3 ml-3 rounded">
+      <div className="bg-[#D9D9D9] border m-2   w-[100%] h-auto p-3 ml-3 rounded">
         <di>
-          <div className="mt-5 ml-2 gap-2 flex p-4">
+          <div className="mt-5 justify-between  gap-2 flex ms-1 py-4">
             <div>
               <button className="btn bg-blue-600 p-2 hover:bg-blue-800 rounded font-bold text-white">
                 Home
               </button>
             </div>
             <div className="ml-24">
-              <input className="block w-72 hover:bg-white  border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            <div className="flex align-middle"><form onChange={handleSearch}>
+            <button
+              type="submit"
+              data-collapse-toggle="navbar-search"
+              aria-controls="navbar-search"
+              aria-expanded="false"
+              className="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 mr-1"
+            >
+              <svg
+                className="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+              <span className="sr-only">Search</span>
+            </button>
+            <div className="relative hidden md:block">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+                <span className="sr-only">Search icon</span>
+              </div>
+              <input
+                type="search"
+                id="search-navbar"
+                className="block xl:w-[12rem] md:w-[18rem] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Search..."
+              />
             </div>
-            <div className="flex gap-2">
-              <button className="btn bg-blue-600 rounded-xl p-2 text-white font-medium hover:bg-blue-800">
-                Categories
-              </button>
-              <button>Categories</button>
-            </div>
+          </form></div>            </div>
           </div>
         </di>
         <div className="mt-2 ml-1 container">
           <div>
-            <div className="grid gap-1 grid-cols-4">
-              {product?.data?.map((products, index) => (
+            <div className={`grid overflow-y-scroll h-lvh gap-1 grid-cols-4 ${style["no-scrollbar"]}`}>
+              {productItem?.map((products, index) => (
                 <div>
                   <div key={index} className="bg-white w-44 p-6 rounded-lg shadow-lg max-w-sm">
                     <img

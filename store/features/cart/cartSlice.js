@@ -108,6 +108,13 @@ const cartSlice = createSlice({
         // }, 0);
       }
     },
+    removeAllCart(state, action) {
+      state.cartItems = [];
+      state.discount = 0;
+      state.totalPrice = 0;
+      state.finalPrice = 0;
+    },
+    
     // Add other reducers as needed
   },
 });
@@ -117,5 +124,5 @@ export const selectTotalDiscount = (state) => state.cart.discount;
 export const selectFinalPrice = (state) => state.cart.finalPrice;
 
 
-export const { addToCart, removeFromCart,incrementQuantity,decrementQuantity } = cartSlice.actions;
+export const { addToCart, removeFromCart,incrementQuantity,decrementQuantity,removeAllCart } = cartSlice.actions;
 export default cartSlice.reducer;
