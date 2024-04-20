@@ -132,11 +132,11 @@ const Add_sale = () => {
                         objectFit: "cover",
                       }}
                     />
-                    <h2 className="text-[14px] truncate  font-bold mt-4 mb-2">
+                    <h2 className="text-[14px] truncate  font-semibold mt-4 mb-2">
                       {products?.name}
                     </h2>
                     <div className="flex justify-between items-center mt-4">
-                      <span className="text-[16px] font-bold">{products?.price}</span>
+                      <span className="text-[16px] font-semibold">${products?.price}</span>
                       <div className="bg-black text-white w-8 h-7 cursor-pointer hover:bg-slate-500 justify-center ms-2 rounded-md flex items-center">
                       <FaCartShopping onClick={() => addProductToCart(products.id)} className="w-4 h-4  mr-0" />
                       </div>

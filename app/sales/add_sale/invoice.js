@@ -7,6 +7,7 @@ import { TiPrinter } from "react-icons/ti";
 import { useDispatch } from "react-redux";
 
 export default function Invoice({
+  code,
   name,
   email,
   phone,
@@ -53,6 +54,7 @@ export default function Invoice({
     }
   };
 
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       const currentDate = new Date();
@@ -75,7 +77,7 @@ export default function Invoice({
         </div>
       </button>
 
-      {isModalVisible && (
+      {isModalVisible && code === "200" && (
         <div
           className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
           onClick={() => setIsModalVisible(false)}
@@ -124,11 +126,11 @@ export default function Invoice({
                 </div>
                 <div class="mb-4">
                   <div class="text-sm text-gray-500">Shop Information:</div>
-                  <div class="font-bold">XYZ Electronics Store</div>
+                  <div class="font-bold">ហាងលក់ទូរស័ព្ទដៃ ចេក​ ស្រីណុច</div>
                   <div class="text-gray-600">
-                    456 High Street, City, Country
+                     ត្រាំ,ដូនកែវ,តាកែវ
                   </div>
-                  <div class="text-gray-600">Phone: +1234567890</div>
+                  <div class="text-gray-600">Phone: 0966986560</div>
                   <div class="text-gray-600">Email: info@example.com</div>
                 </div>
                 <div class="mb-4">

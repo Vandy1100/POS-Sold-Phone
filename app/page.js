@@ -17,8 +17,6 @@ const page = () => {
     error,
   } = useGetUserQuery();
   const data = useSelector((state) => state);
-  console.log("accessToken",data)
-  console.log("user", user);
   const dispatch = useDispatch();
   useEffect(() => {
     if (isSuccess) {
@@ -33,13 +31,12 @@ const page = () => {
   console.log(isLoggedIn)
   useEffect(() => {
     const storedLoggedIn = localStorage.getItem("isLoggedIn");
-    console.log("+",storedLoggedIn)
     if (!isLoggedIn && !storedLoggedIn) {
       // Redirect to the login page if the user is not logged in
       console.log("User not logged in. Please log in to perform this action.");
       router.push("/auth/login"); // Update to the actual login page route
     }
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {

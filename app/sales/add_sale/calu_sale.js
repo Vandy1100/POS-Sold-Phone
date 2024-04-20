@@ -28,6 +28,7 @@ const Calu_sale = () => {
   const [email,setEmail] = useState("")
   const [phone,setPhone] = useState("")
   const [products,setProduct] = useState([])
+  const [code,setCode] = useState("")
   // const [price,setPrice] = useState([])
   // const [quantity, setQuantity] = useState(0); // Initial quantity
   const dispatch = useDispatch();
@@ -149,6 +150,7 @@ const Calu_sale = () => {
 
       const postData = JSON.stringify({ customerDto, saleDto, saleItemDtos });
       const response = await createSoldItem(postData);
+      setCode(response?.data?.code)
       if (response?.data?.code == '200') {
         notify();
        
@@ -159,6 +161,7 @@ const Calu_sale = () => {
       notifyError();
     }
   };
+
 
   return (
     <div className="bg-[#D9D9D9] flex flex-col p-[0_0_14px_0] box-sizing-border">
@@ -356,6 +359,7 @@ const Calu_sale = () => {
             <div className="m-[0_21px_0_23px] flex flex-row justify-between w-[calc(100%_-_44px)] box-sizing-border">
               <div className="">
               <Invoice
+              code={code}
               name={customerName}
               email={email}
               phone={phone}

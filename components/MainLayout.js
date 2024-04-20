@@ -22,6 +22,7 @@ const MainLayout = ({ children }) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -35,6 +36,14 @@ const MainLayout = ({ children }) => {
   };
   const dispatch = useDispatch();
   const router = useRouter()
+
+  useEffect(() => {
+    const isLogin = localStorage.getItem("isLoggedIn");
+    console.log("gggggg", isLogin);
+    if (!isLogin || isLogin === "false") {
+       router.push("/auth/login");
+    }
+}, []);
   //set logout
   const handleLogout = () => {
     dispatch(logout());

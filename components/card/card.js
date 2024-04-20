@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaUsers } from "react-icons/fa";
 import Chart from '../chart/chart';
 import Sunnry from '../sunnry/sunnry';
@@ -9,11 +9,15 @@ import { useGetRequestReportsCustomerQuery, useGetRequestReportsDailyQuery, useG
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
+import { useRouter } from 'next/navigation';
 
 
 
 const Card = () => {
-   
+
+  
+    
+
 
     const{data:daily,isLoading:dailyIsLoading,error:dailyError} = useGetRequestReportsDailyQuery();
     const{data:total,isLoading:totalIsLoading,error:totalError} = useGetRequestReportsTotalSoldQuery();
