@@ -71,7 +71,6 @@ const Calu_sale = () => {
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Address is required'),
     phone: Yup.string().required('Phone number is required'),
-    totalAmount: Yup.number().positive('Total amount must be positive').required('Total amount is required'),
   });
 
   
@@ -198,6 +197,7 @@ const Calu_sale = () => {
           values.unitPrice = updatedValues.unitPrice
           values.quantity = updatedValues.quantity
           values.userId = updatedValues.userId
+          values.totalAmount = finalPrice
           setTimeout(() => {
             // alert(JSON.stringify(values, null, 2));
             setSubmitting(false);
@@ -313,7 +313,7 @@ const Calu_sale = () => {
                 )}
               </div>
             </div>
-            <div className="rounded-[5px]  relative m-[0_23px_15px_23px] ">
+            {/* <div className="rounded-[5px]  relative m-[0_23px_15px_23px] ">
               <div>
                 <Field
                   type="number"
@@ -326,7 +326,7 @@ const Calu_sale = () => {
                   <div className="text-red-500">{errors.totalAmount}</div>
                 )}
               </div>
-            </div>
+            </div> */}
             <div className="rounded-[5px] bg-[#FFFFFF] relative m-[0_23px_13px_23px] flex flex-col p-[6px_17.8px_7px_3px] w-[calc(100%_-_46px)] box-sizing-border">
               <div className="bg-[#000000] absolute left-[7px] top-[33px] right-[16px] h-[1px]"></div>
               <div className="bg-[#000000] absolute left-[7px] right-[16px] bottom-[7px] h-[1px]"></div>

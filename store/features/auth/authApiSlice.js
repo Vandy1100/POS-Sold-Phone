@@ -11,7 +11,32 @@ export const authApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+    createRequestUser: builder.mutation({
+      query: (user) => ({
+        url: "/auth/register",
+        method: "POST",
+        body: user,
+      }),
+      invalidatesTags: ["requestUser"],
+    }),
+    getRequestUsers: builder.query({
+      query: () => `/auth/users`,
+      keepUnusedDataFor: 5,
+      providesTags: ["requestUser"],
+    }),
+    deleteRequestUser: builder.mutation({
+      query: (id) => ({
+        url: `/auth/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["requestUser"],
+    }),
   }),
 });
 // auto generated hooks for login mutation
-export const { useLoginMutation } = authApiSlice;
+export const {
+  useLoginMutation,
+  useCreateRequestUserMutation,
+  useDeleteRequestUserMutation,
+  useGetRequestUsersQuery,
+} = authApiSlice;

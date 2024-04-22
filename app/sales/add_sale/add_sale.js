@@ -120,7 +120,7 @@ const Add_sale = () => {
         </di>
         <div className="mt-2 ml-1 container">
           <div>
-            <div className={`grid overflow-y-scroll h-lvh gap-1 grid-cols-4 ${style["no-scrollbar"]}`}>
+            <div className={`grid overflow-y-scroll  gap-x-3 gap-y-3 grid-cols-4 ${style["no-scrollbar"]}`}>
               {productItem?.map((products, index) => (
                 <div>
                   <div key={index} className="bg-white w-44 p-6 rounded-lg shadow-lg max-w-sm">

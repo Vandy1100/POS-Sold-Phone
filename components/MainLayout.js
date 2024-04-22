@@ -39,7 +39,6 @@ const MainLayout = ({ children }) => {
 
   useEffect(() => {
     const isLogin = localStorage.getItem("isLoggedIn");
-    console.log("gggggg", isLogin);
     if (!isLogin || isLogin === "false") {
        router.push("/auth/login");
     }
@@ -78,18 +77,10 @@ const MainLayout = ({ children }) => {
               <FaUser className="mr-2" />
               <span className="font-normal flex-1">Users</span>
               <MdNavigateNext />
-
-
             </li>
             {/* Dropdown */}
             {isDropdownOpen && (
               <ul className=" z-10 top-full left-0 mt-1 ms-4 w-36">
-                <li className="py-2 px-4 hover:bg-gray-100">
-                  <Link href="/users/create_group_user">Add Group User</Link>
-                </li>
-                <li className="py-2 px-4 hover:bg-gray-100">
-                  <Link href="/users/list_group_user">List Group User</Link>
-                </li>
                 <li className="py-2 px-4 hover:bg-gray-100">
                   <Link href="/users/create_user">Create User</Link>
                 </li>
@@ -112,16 +103,16 @@ const MainLayout = ({ children }) => {
             {isDropdownOpenProduct && (
               <ul className=" z-10 top-full left-0 mt-1 ms-4 w-36">
                 <li className="py-2 px-4 hover:bg-gray-100">
-                  <Link href="/product/create_product">Add Product</Link>
+                  <Link href="/product/create_product">Create Product</Link>
                 </li>
                 <li className="py-2 px-4 hover:bg-gray-100">
                   <Link href="/product/index_product">List Products</Link>
                 </li>
                 <li className="py-2 px-4 hover:bg-gray-100">
-                  <Link href="/product/create_category">List Category</Link>
+                  <Link href="/product/create_category">List Categorys</Link>
                 </li>
                 <li className="py-2 px-4 hover:bg-gray-100">
-                  <Link href="/product/stock_history">Stock History</Link>
+                  <Link href="/product/stock_history">Stock Historys</Link>
                 </li>
               </ul>
             )}

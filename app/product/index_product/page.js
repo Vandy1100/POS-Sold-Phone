@@ -94,6 +94,8 @@ useEffect(() => {
     {
       name: "NO",
       selector: (row) => row.id ? row.id : "N/A",
+      minWidth: "80px",
+      maxWidth: "10px"
     },
     {
       name: "Product Name",
@@ -106,27 +108,39 @@ useEffect(() => {
           <img src={row.productImage} alt="Product" height={60} width={60} />
         </div>
       ),
+      minWidth: "80px",
+      maxWidth: "140px"
     },
     {
       name: "Category",
       selector: (row) => row.category ? row.category.category : "N/A",
+      minWidth: "80px",
+      maxWidth: "120px"
     },
 
     {
       name: "QTY",
       selector: (row) => row.quantity ? row.quantity : "0",
+      minWidth: "80px",
+      maxWidth: "10px"
     },
     {
       name: "Price",
       selector: (row) => row.price ? `$` + row.price : "N/A",
+      minWidth: "80px",
+      maxWidth: "10px"
     },
     {
       name: "Date",
       selector: (row) => row.productDate ? row.productDate : "N/A",
+      minWidth: "80px",
+      maxWidth: "120px"
     },
     {
       name: "Discount",
       selector: (row) => row.discount ? row.discount : "0",
+      minWidth: "80px",
+      maxWidth: "120px"
     },
     {
         name: "Status",
@@ -157,15 +171,21 @@ useEffect(() => {
             );
           }
         },
+        minWidth: "80px",
+        maxWidth: "10px"
       },
     
     {
       name: "Add Stock",
       selector: (row) => <AddStockProduct id={row.id} />,
+      minWidth: "80px",
+      maxWidth: "10px"
     },
     {
       name: "Discount",
       selector: (row) => <AddDiscount id={row.id} />,
+      minWidth: "80px",
+      maxWidth: "120px"
     },
     {
       name: "Action",

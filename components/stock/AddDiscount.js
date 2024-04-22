@@ -112,7 +112,7 @@ export default function AddDiscount({ id }) {
               validationSchema={validationSchema}
               onSubmit={(values, { setSubmitting, resetForm }) => {
                 setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
+                  // alert(JSON.stringify(values, null, 2));
                   setSubmitting(false);
                   handleUpdateDiscount(idp, values).then((resp) => {});
                 }, 400);
