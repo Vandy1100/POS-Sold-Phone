@@ -73,7 +73,7 @@ export default function AddStockProduct({ id }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900">Add Stock</h3>
+              <h3 className="text-xl font-semibold text-gray-900">Create Stock</h3>
               <button
                 type="button"
                 className="text-teal-400 hover:text-teal-500 focus:outline-none"

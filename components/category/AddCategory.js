@@ -24,7 +24,7 @@ export default function AddCategory() {
         try {
           insertCategory(values);
           notify();
-        //   setIsModalVisible(false);
+          setIsModalVisible(false);
         } catch (error) {
           alert(error.message);
         }
@@ -57,7 +57,7 @@ export default function AddCategory() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900">Add Stock</h3>
+              <h3 className="text-xl font-semibold text-gray-900">Create Category</h3>
               <button
                 type="button"
                 className="text-teal-400 hover:text-teal-500 focus:outline-none"
@@ -88,7 +88,7 @@ export default function AddCategory() {
                 //   values.userId = id;
 
                   setTimeout(() => {
-                    // alert(JSON.stringify(values, null, 2));
+  
                     setSubmitting(false);
                     postCategory(values).then((resp) => {
                         resetForm({
@@ -107,7 +107,7 @@ export default function AddCategory() {
                     <div >
                       <div>
                         <div>
-                          <label className="font-mono">Name Category</label>
+                          <label className="font-semibold">Name Category</label>
                           <Field
                             type="text"
                             name="category"
@@ -129,7 +129,7 @@ export default function AddCategory() {
                     <div>
                       <div >
                         <div>
-                          <label className="font-mono">Description</label>
+                          <label className="font-semibold">Description</label>
             
                           <Field
                       type="text"
@@ -156,7 +156,7 @@ export default function AddCategory() {
                           type="submit"
                           className=" btn w-14 rounded font-medium text-white bg-blue-600 p-3 cursor-pointer hover:bg-orange-300"
                         >
-                          Add
+                          Save
                         </button>
                       </div>
                     </div>

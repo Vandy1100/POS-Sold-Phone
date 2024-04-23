@@ -1,12 +1,12 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { setCredentials } from "../../../store/features/auth/authSlice";
+import { logout, setCredentials } from "../../../store/features/auth/authSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLoginMutation } from "@/store/features/auth/authApiSlice";
@@ -67,8 +67,12 @@ const handleSubmit = async ({ email, password }) => {
       dispatch(
         setCredentials(data)
       );
+      if(data){
       notify()
       router.push("/");
+      }else{
+        notifyError()
+      }
     } catch (error) {
       if (!error.response) {
         notifyError()
@@ -80,6 +84,10 @@ const handleSubmit = async ({ email, password }) => {
       }
     }
   };
+  useEffect(()=>{
+    dispatch(logout())
+    console.log("success")
+  },[])
 
 
   if (isLoading)
@@ -130,7 +138,7 @@ const handleSubmit = async ({ email, password }) => {
                     name="email"
                     id="floating_email"
                     className="block w-[100%] rounded-2xl backdrop-blur-sm bg-white/30 border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
-                    placeholder=" "
+                    placeholder="Email..."
                   />
                   <ErrorMessage
                     name="email"
@@ -143,7 +151,7 @@ const handleSubmit = async ({ email, password }) => {
                     name="password"
                     id="floating_password"
                     className="rounded-2xl block w-[100%] backdrop-blur-sm bg-white/30 border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset bg-none2  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
-                    placeholder=" "
+                    placeholder="Password..."
                   />
                   <ErrorMessage
                     name="password"

@@ -24,6 +24,11 @@ export const authApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
       providesTags: ["requestUser"],
     }),
+    getRequestRoles: builder.query({
+      query: () => `/auth/roles`,
+      keepUnusedDataFor: 5,
+      providesTags: ["requestUser"],
+    }),
     deleteRequestUser: builder.mutation({
       query: (id) => ({
         url: `/auth/users/${id}`,
@@ -39,4 +44,5 @@ export const {
   useCreateRequestUserMutation,
   useDeleteRequestUserMutation,
   useGetRequestUsersQuery,
+  useGetRequestRolesQuery,
 } = authApiSlice;

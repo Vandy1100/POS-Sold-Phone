@@ -18,19 +18,24 @@ const authSlice = createSlice({
     setCurrentUser: (state, action) => {
       state.user = action?.payload;
     },
-    logout: (state) => {
+    logoutSuccess: (state) => {
       state.user = "";
       state.accessToken = null;
-      removeRefreshToken();
-      console.log("logout");
     },
   },
 });
 
-export const { setCredentials, logout, setCurrentUser } = authSlice.actions;
+export const { setCredentials, logoutSuccess, setCurrentUser } = authSlice.actions;
 
 export default authSlice.reducer;
 
 export const selectCurrentUser = (state) => state?.auth?.user;
 export const selectCurrentAccessToken = (state) => state?.auth?.accessToken;
 export const selectIsLoggedIn = (state) => !!state?.auth?.accessToken; // New selector
+export const logout = () => async (dispatch) => {
+  // Dispatch the action to remove token
+  removeRefreshToken(); // assuming this function returns a promise or is synchronous
+  
+  // Dispatch the action to update the state after token is removed
+  dispatch(logoutSuccess());
+};

@@ -6,7 +6,7 @@ import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useCreateRequestUserMutation } from "@/store/features/auth/authApiSlice";
+import { useCreateRequestUserMutation, useGetRequestRolesQuery } from "@/store/features/auth/authApiSlice";
 const User = () => {
 
     const notify = () => {
@@ -33,6 +33,7 @@ const User = () => {
         email: "",
         password: "",
         confirmPassword: "",
+        role:0
       };
       const validationSchema = Yup.object({
         firstname: Yup.string().required("First name is required"),
@@ -42,19 +43,21 @@ const User = () => {
         confirmPassword: Yup.string()
           .oneOf([Yup.ref('password'), null], 'Passwords must match')
           .required('Confirm Password is required'),
+          role:Yup.number().positive().integer().required('Please select a role')
       });
 
       const [createUser] = useCreateRequestUserMutation()
 
       const postUser = async (values) => {
         try {
-          let { email, password, confirmPassword, firstname, lastname} = values;
+          let { email, password, confirmPassword, firstname, lastname,role} = values;
           let myHeaders = new Headers();
           myHeaders.append("Content-Type", "application/json");
     
           const userData = JSON.stringify({
-            email, password, confirmPassword, firstname, lastname
+            email, password, confirmPassword, firstname, lastname,role
           });
+          alert(userData);
           const response = await createUser(userData);
           console.log(response)
           if (response.data) {
@@ -68,6 +71,9 @@ const User = () => {
           notifyError()
         }
       };
+
+      const {data:roles,isLoading:roleIsLoading,error,roleError}= useGetRequestRolesQuery()
+      console.log("role",roles)
 
   return (
     <>
@@ -83,7 +89,7 @@ const User = () => {
                 initialValues={initialValues}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
                   setTimeout(() => {
-                    // alert(JSON.stringify(values, null, 2));
+                    alert(JSON.stringify(values, null, 2));
                     setSubmitting(false);
                     postUser(values).then((resp) => {
                       resetForm({
@@ -92,7 +98,8 @@ const User = () => {
                               password:"",
                               confirmPassword:"",
                               firstname:"",
-                              lastname:""
+                              lastname:"",
+                              role:0
                           }
                       })
                     });
@@ -196,6 +203,35 @@ const User = () => {
                             <small className="text-red-500">{errors.lastname}</small>
                           )}
                 </div>
+                <div class="relative z-0 w-full mb-5 group">
+    <Field
+        as="select"
+        name="role"
+        id="role"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+    >
+        <option selected>Select Role</option>
+
+           {roles?.data
+            ? roles?.data?.map((item,index) => (
+                <option key={index} value={item.id}>
+                  {item.role}
+                </option>
+              ))
+            : null}
+     
+    </Field>
+    <label
+        for="role"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+    >
+        Role
+    </label>
+    {touched.role && errors.role && (
+        <small className="text-red-500">{errors.role}</small>
+    )}
+</div>
+
               </div>
               
               <button

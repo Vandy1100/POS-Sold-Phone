@@ -62,8 +62,12 @@ export default function LIstReport() {
       },
    
       {
-        name: "Phone Number",
+        name: "Customer Phone Number",
         selector: (row) => (row.phone ? row.phone : "N/A"),
+      },
+      {
+        name: "Seller Name",
+        selector: (row) => (row.firstname && row.lastname ? row.firstname +" "+row.lastname : "N/A"),
       },
       {
         name: "Total Amount",

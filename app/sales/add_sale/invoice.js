@@ -131,7 +131,7 @@ export default function Invoice({
                      ត្រាំ,ដូនកែវ,តាកែវ
                   </div>
                   <div class="text-gray-600">Phone: 0966986560</div>
-                  <div class="text-gray-600">Email: info@example.com</div>
+                  <div class="text-gray-600">Email: Nganvidy@gmail.com</div>
                 </div>
                 <div class="mb-4">
                   <div class="text-sm text-gray-500">Customer Information:</div>

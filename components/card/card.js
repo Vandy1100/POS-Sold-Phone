@@ -147,7 +147,7 @@ const Card = () => {
         </div>
         <div className="bg-[#D9D9D9] w-[97%] mt-1 rounded">
           <div className="mt-3">
-            <Transaction />
+            {/* <Transaction /> */}
           </div>
         </div>
       </div>

@@ -176,7 +176,7 @@ useEffect(() => {
       },
     
     {
-      name: "Add Stock",
+      name: "Stock",
       selector: (row) => <AddStockProduct id={row.id} />,
       minWidth: "80px",
       maxWidth: "10px"

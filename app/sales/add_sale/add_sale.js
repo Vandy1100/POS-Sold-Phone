@@ -1,11 +1,11 @@
 "use client";
 import { addToCart } from "@/store/features/cart/cartSlice";
-import { useGetRequestProductToSalesQuery } from "@/store/features/product/requestProductApi";
 import React, { useEffect, useState } from "react";
 import { BsCartFill } from "react-icons/bs";
 import { FaCartShopping } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import style from "./saleitem.module.css"
+import { useGetRequestProductToSalesQuery } from "@/store/features/soldItem/RequestSoldItemApi";
 const Add_sale = () => {
   const [search,setSearch] = useState()
   const [productItem,setProductItem] = useState()

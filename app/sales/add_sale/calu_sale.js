@@ -18,6 +18,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Invoice from "./invoice";
 import * as Yup from 'yup';
+import { useGetUserQuery } from "@/store/features/user/userApiSlice";
+import { setCurrentUser } from "@/store/features/auth/authSlice";
 const Calu_sale = () => {
   const cartItems = useSelector(selectCartItems);
   const totalPrice = useSelector(selectTotalPrice);
@@ -29,9 +31,26 @@ const Calu_sale = () => {
   const [phone,setPhone] = useState("")
   const [products,setProduct] = useState([])
   const [code,setCode] = useState("")
+  const [id, setId] = useState(0);
+  const dispatch = useDispatch()
+  const {
+    data: user,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetUserQuery();
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(setCurrentUser(user));
+    }
+  }, []);
+  useEffect(() => {
+    setId(user?.data?.id);
+    [];
+  });
   // const [price,setPrice] = useState([])
   // const [quantity, setQuantity] = useState(0); // Initial quantity
-  const dispatch = useDispatch();
   const increment = (id) => {
     dispatch(incrementQuantity({ id }));
   };
@@ -189,7 +208,7 @@ const Calu_sale = () => {
             updatedValues.productId.push(item.id);
             updatedValues.quantity.push(item.quantity);
             updatedValues.unitPrice.push(item.price);
-            updatedValues.userId.push(1); // Assuming userId is a string
+            updatedValues.userId.push(id); // Assuming userId is a string
           });
       
           // console.log("Updated Form Values:", updatedValues.productId);

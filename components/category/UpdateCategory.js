@@ -35,7 +35,7 @@ export default function UpadteCategory({ id }) {
     };
   // success alert
   const notify = () => {
-    toast.success("Product has been updated successfully!", {
+    toast.success("Category has been updated successfully!", {
       theme: "colored",
       icon: "🎉",
       autoClose: 1000,
@@ -72,7 +72,7 @@ export default function UpadteCategory({ id }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900">Add Stock</h3>
+              <h3 className="text-xl font-semibold text-gray-900">Update Category</h3>
               <button
                 type="button"
                 className="text-teal-400 hover:text-teal-500 focus:outline-none"
@@ -101,7 +101,6 @@ export default function UpadteCategory({ id }) {
               //     validationSchema={validationSchema}
               onSubmit={async (values, { setSubmitting, resetForm }) => {
                 setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
                   setSubmitting(false);
                   handleUpdateCategory(idp,values).then((resp) => {});
                 }, 400);

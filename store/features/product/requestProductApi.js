@@ -12,11 +12,6 @@ export const requestProductApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
       providesTags: ["requestProduct"],
     }),
-    getRequestProductToSales: builder.query({
-      query: () => `/products/product_sales`,
-      keepUnusedDataFor: 5,
-      providesTags: ["requestProduct"],
-    }),
     getRequestProductById: builder.query({
       query: (id) => `/products/${id}`,
       providesTags: ["requestProduct"],
@@ -74,7 +69,6 @@ export const {
   useUpdateRequestProductMutation,
   useGetRequestProductsQuery,
   useGetRequestProductStocksQuery,
-  useGetRequestProductToSalesQuery,
   useGetRequestProductByIdQuery,
   useDeleteRequestProductMutation,
   useUpdateRequestDiscountMutation,
