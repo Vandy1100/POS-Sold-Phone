@@ -57,9 +57,7 @@ const User = () => {
           const userData = JSON.stringify({
             email, password, confirmPassword, firstname, lastname,role
           });
-          alert(userData);
           const response = await createUser(userData);
-          console.log(response)
           if (response.data) {
             // Successful response
             notify();
@@ -89,7 +87,6 @@ const User = () => {
                 initialValues={initialValues}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
                   setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
                     setSubmitting(false);
                     postUser(values).then((resp) => {
                       resetForm({

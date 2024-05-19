@@ -199,7 +199,9 @@ const Calu_sale = () => {
         saleItemDtos,
         saleDetailDtos,
       });
+      console.log('data1',postData)
       const response = await createSoldItem(postData);
+      console.log('data2',response)
       setCode(response?.data?.code);
       if (response?.data?.code == "200") {
         setWarrantyDate([]);
