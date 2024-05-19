@@ -101,8 +101,19 @@ const Calu_sale = () => {
     name: Yup.string().required("Name is required"),
     email: Yup.string().required("Address is required"),
     phone: Yup.string().required("Phone number is required"),
-    IME: Yup.array().of(Yup.string().required("IME is required")),
-    warrantyDate: Yup.number().positive().required("Warranty date is required"),
+    IME: Yup.array()
+      .of(Yup.string().required("IME is required"))
+      .test({
+        name: "at-least-one-ime",
+        message:
+          "IME is required",
+        test: (value) => {
+          if (!value || value.length === 0) {
+            return false; // if the array is empty, it's invalid
+          }
+          return value.every((ime) => ime !== undefined && ime !== ""); // check each IME
+        },
+      }),
   });
 
   cartItems.forEach((item) => {
@@ -326,7 +337,7 @@ const Calu_sale = () => {
                   </div>
 
                   {/* Quantity Controls */}
-                  <div className="flex flex-row absolute bottom-0 mb-3 right-0 border">
+                  <div className="flex flex-row absolute bottom-0 mb-3 right-0">
                     {/* Decrement Button */}
                     <div
                       className="rounded-full rotate-90 mt-2 text-2xl flex items-center justify-center h-8 w-8 mx-2 cursor-pointer bg-red-500 text-white"
@@ -421,81 +432,8 @@ const Calu_sale = () => {
                 )}
               </div>
             </div>
-            <div className="rounded-[5px] flex flex-wrap  relative m-[0_23px_15px_23px]">
-              <div className="bg-[#000000] absolute left-[7px] top-[30px] w-[97%] right-[16px] h-[1px]"></div>
-              <div className="m-[0_12.5px_3px_0] inline-block w-[367.5px] break-words font-['Hind_Kochi'] font-normal text-[15px] text-[#000000]">
-                <h3 className="font-semibold">Sale Details</h3>
-              </div>
-              <div className="">
-                <div
-                  onClick={handleAddAnswerValue}
-                  className="bg-blue-500 ms-7 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded"
-                >
-                  <IoIosAddCircle />
-                </div>
-              </div>
-            </div>
-            {/* <div className="">
-              {IME.map((_, index) => (
-                <div className="flex flex-wrap ">
-                  <div className="rounded-[5px]  relative m-[0_0px_15px_23px] ">
-                    <div>
-                      <WarrantyDatePicker
-                        name={`warrantyDate[${index}]`}// Pass the onChange handler to update Formik's values
-                      />
-                    </div>
-                  </div>
-                  <div className="rounded-[5px] w-[38%] relative m-[0_0px_15px_23px] ">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveAnswerValue(index)}
-                      class="text-white w-5 h-5 absolute left-[178px] top-1 bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-1 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-4 h-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                      <span class="sr-only">Icon description</span>
-                    </button>
-                    <div>
-                      <Field
-                        type="text"
-                        name={`IME[${index}]`}
-                        class=" block w-full h-9 rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
-                        placeholder="Ime...?"
-                      />
-                      {touched.IME && errors.IME && (
-                        <div className="text-red-500">{errors.IME}</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div> */}
-            {/* <div className="rounded-[5px]  relative m-[0_23px_15px_23px] ">
-              <div>
-                <Field
-                  type="number"
-                  name="totalAmount"
-                  id="totalAmount"
-                  class=" block w-full  rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
-                  placeholder="Cash Payment....?"
-                />
-                {touched.totalAmount && errors.totalAmount && (
-                  <div className="text-red-500">{errors.totalAmount}</div>
-                )}
-              </div>
-            </div> */}
+
+            
             <div className="rounded-[5px] bg-[#FFFFFF] relative m-[0_23px_13px_23px] flex flex-col p-[6px_17.8px_7px_3px] w-[calc(100%_-_46px)] box-sizing-border">
               <div className="bg-[#000000] absolute left-[7px] top-[33px] right-[16px] h-[1px]"></div>
               <div className="bg-[#000000] absolute left-[7px] right-[16px] bottom-[7px] h-[1px]"></div>
