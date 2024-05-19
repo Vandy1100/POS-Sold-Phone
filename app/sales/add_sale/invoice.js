@@ -11,6 +11,7 @@ export default function Invoice({
   name,
   email,
   phone,
+  warrantyDate,
   product,
   totalPrice,
   finalPrice,
@@ -53,7 +54,7 @@ export default function Invoice({
       console.error("Error while generating PDF:", error);
     }
   };
-
+   console.log(warrantyDate)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -68,6 +69,7 @@ export default function Invoice({
   const dispatch = useDispatch();
   const deleteAllCart = () => {
     dispatch(removeAllCart());
+    window.location.href = '/sales';
   };
   return (
     <>
@@ -184,12 +186,22 @@ export default function Invoice({
                                 ${item.price}
                               </div>
                             </td>
+                            
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
+                <div class="mb-1">
+                  <div class="flex justify-between">
+                    <div class="text-gray-700 font-bold">Warranty Date:</div>
+                    <div class="font-bold me-5">
+                      {warrantyDate[0]}
+                    </div>
+                  </div>
+                </div>
+                <hr />
                 <div class="mb-1">
                   <div class="flex justify-between">
                     <div class="text-gray-700 font-bold">Sub Total:</div>
@@ -199,6 +211,7 @@ export default function Invoice({
                   </div>
                 </div>
                 <hr />
+
                 <div class="mb-1">
                   <div class="flex justify-between">
                     <div class="text-gray-700 font-bold">Discount:</div>

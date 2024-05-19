@@ -107,7 +107,7 @@ export default function AddCategory() {
                     <div >
                       <div>
                         <div>
-                          <label className="font-semibold">Name Category</label>
+                          <label className="font-semibold">Category</label>
                           <Field
                             type="text"
                             name="category"

@@ -10,29 +10,39 @@ import {
 } from "@/store/features/cart/cartSlice";
 import { useGetRequestProductsQuery } from "@/store/features/product/requestProductApi";
 import { useCreateRequestSoldItemMutation } from "@/store/features/soldItem/RequestSoldItemApi";
-import { Field, Form, Formik, validateYupSchema } from "formik";
+import {
+  Field,
+  Form,
+  Formik,
+  useFormikContext,
+  validateYupSchema,
+} from "formik";
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Invoice from "./invoice";
-import * as Yup from 'yup';
+import * as Yup from "yup";
+import { IoIosAddCircle, IoMdEye } from "react-icons/io";
 import { useGetUserQuery } from "@/store/features/user/userApiSlice";
 import { setCurrentUser } from "@/store/features/auth/authSlice";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 const Calu_sale = () => {
   const cartItems = useSelector(selectCartItems);
   const totalPrice = useSelector(selectTotalPrice);
   const totalDiscount = useSelector(selectTotalDiscount);
   const finalPrice = useSelector(selectFinalPrice);
-  const [isPopupVisible,setIsPopupVisible]=useState(false)
-  const [customerName,setCustomerName] = useState("")
-  const [email,setEmail] = useState("")
-  const [phone,setPhone] = useState("")
-  const [products,setProduct] = useState([])
-  const [code,setCode] = useState("")
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [products, setProduct] = useState([]);
+  const [code, setCode] = useState("");
   const [id, setId] = useState(0);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {
     data: user,
     isLoading,
@@ -74,7 +84,6 @@ const Calu_sale = () => {
     }
   };
 
-
   const initialValues = {
     name: "",
     email: "",
@@ -84,15 +93,17 @@ const Calu_sale = () => {
     quantity: [],
     unitPrice: [],
     userId: [],
+    IME: [],
+    warrantyDate: [],
   };
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Address is required'),
-    phone: Yup.string().required('Phone number is required'),
+    name: Yup.string().required("Name is required"),
+    email: Yup.string().required("Address is required"),
+    phone: Yup.string().required("Phone number is required"),
+    IME: Yup.array().of(Yup.string().required("IME is required")),
+    warrantyDate: Yup.number().positive().required("Warranty date is required"),
   });
-
-  
 
   cartItems.forEach((item) => {
     initialValues.productId.push(item.id);
@@ -109,7 +120,6 @@ const Calu_sale = () => {
       position: "top-center",
     });
   };
-  
 
   const notifyError = () => {
     toast.success("You not sold your item!!", {
@@ -137,9 +147,8 @@ const Calu_sale = () => {
   useEffect(() => {
     setProduct(cartItems);
   }, [cartItems]);
-  
-  
-  const [createSoldItem] = useCreateRequestSoldItemMutation()
+
+  const [createSoldItem] = useCreateRequestSoldItemMutation();
 
   const postSaleItem = async (values) => {
     try {
@@ -152,6 +161,8 @@ const Calu_sale = () => {
         quantity,
         unitPrice,
         userId,
+        IME,
+        warrantyDate,
       } = values;
 
       const myHeaders = new Headers();
@@ -165,21 +176,49 @@ const Calu_sale = () => {
         unitPrice: unitPrice[index],
         userId: userId[index],
       }));
+      const saleDetailDtos = productId.map((id, index) => ({
+        productId: id,
+        IME: IME[index],
+        warrantyDate: warrantyDate[index],
+      }));
 
-      const postData = JSON.stringify({ customerDto, saleDto, saleItemDtos });
+      const postData = JSON.stringify({
+        customerDto,
+        saleDto,
+        saleItemDtos,
+        saleDetailDtos,
+      });
       const response = await createSoldItem(postData);
-      setCode(response?.data?.code)
-      if (response?.data?.code == '200') {
+      setCode(response?.data?.code);
+      if (response?.data?.code == "200") {
+        setWarrantyDate([]);
+        setIme([]);
         notify();
-       
-      }else{
-        insufficientError()
+      } else {
+        insufficientError();
+        window.location.href = "/sales";
       }
     } catch (error) {
       notifyError();
+      window.location.href = "/sales";
     }
   };
 
+  //using useState for handle add and remove
+  const [IME, setIme] = useState(initialValues.IME);
+  const [warrantyDate, setWarrantyDate] = useState(initialValues.warrantyDate);
+
+  //handle add and remove when we wanted data extra
+  const handleAddAnswerValue = () => {
+    setIme(IME.concat(""));
+    setWarrantyDate(warrantyDate.concat(""));
+  };
+
+  const handleRemoveAnswerValue = (index) => {
+    // Filter out the item at the specified index from ime and warrantyDate states
+    setIme(IME.filter((_, i) => i !== index));
+    setWarrantyDate(warrantyDate.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="bg-[#D9D9D9] flex flex-col p-[0_0_14px_0] box-sizing-border">
@@ -189,10 +228,9 @@ const Calu_sale = () => {
         </span>
       </div>
       <Formik
-         validationSchema={validationSchema}
+        validationSchema={validationSchema}
         initialValues={initialValues}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-
           const updatedValues = {
             ...values,
             productId: [],
@@ -201,8 +239,6 @@ const Calu_sale = () => {
             userId: [],
           };
 
-    
-          
           // Update the arrays in the new object
           cartItems.forEach((item) => {
             updatedValues.productId.push(item.id);
@@ -210,88 +246,141 @@ const Calu_sale = () => {
             updatedValues.unitPrice.push(item.price);
             updatedValues.userId.push(id); // Assuming userId is a string
           });
-      
+
           // console.log("Updated Form Values:", updatedValues.productId);
-          values.productId = updatedValues.productId
-          values.unitPrice = updatedValues.unitPrice
-          values.quantity = updatedValues.quantity
-          values.userId = updatedValues.userId
-          values.totalAmount = finalPrice
+          values.productId = updatedValues.productId;
+          values.unitPrice = updatedValues.unitPrice;
+          values.quantity = updatedValues.quantity;
+          values.userId = updatedValues.userId;
+          values.totalAmount = finalPrice;
           setTimeout(() => {
             // alert(JSON.stringify(values, null, 2));
             setSubmitting(false);
             postSaleItem(values).then((resp) => {
-              console.log("Form values:", values);
-              setCustomerName(values.name)
-              setEmail(values.email)
-              setPhone(values.phone)
+              setCustomerName(values.name);
+              setEmail(values.email);
+              setPhone(values.phone);
+              setWarrantyDate(values.warrantyDate);
               setIsPopupVisible(true);
               resetForm({
-                values:{
-                    name:"",
-                    email:"",
-                    phone:"",
-                    totalAmount:0
-                }
-            })
+                values: {
+                  name: "",
+                  email: "",
+                  phone: "",
+                  totalAmount: 0,
+                  warrantyDate: [],
+                  IME: [],
+                },
+              });
             });
           }, 400);
         }}
       >
         {({ errors, touched }) => (
           <Form>
-            {cartItems.map((item, index) => (
-              <div
-                key={index}
-                className="bg-[#FFFFFF] relative m-[0_23px_16px_23px] flex flex-row p-[7px_12px_8px_15px] w-[calc(100%_-_46px)] box-sizing-border"
-              >
-                <img
-                  src={item.image}
-                  className="bg-[#D9D9D9] m-[10px_20px_12px_0] w-20 h-20 grow basis-[75px]"
-                />
-                <div className="m-[5px_79.3px_6px_0] flex flex-col grow basis-[118.7px] box-sizing-border">
-                  <div className="m-[0_0_20px_0] inline-block break-words font-['Hind_Kochi'] font-semibold text-[16px] text-[#000000]">
-                    {item.name}
+            <div className="w-[100%]">
+              {cartItems.map((item, index) => (
+                <div className="bg-white relative m-2 p-3 flex flex-row items-center rounded-md shadow-md">
+                  {/* Product Image */}
+                  <div className="w-24">
+                    <img
+                      src={item.image}
+                      className="w-20 absolute left-0 mt-2 ml-2 h-20 block top-0 mb-16 rounded-md mr-3"
+                      alt={item.name}
+                    />
                   </div>
-                  <span className="m-[0_5px_0_5px] self-start break-words font-['Hind_Kochi'] font-semibold text-[16px] text-[#000000]">
-                    ${item.price}
-                  </span>
+                  {/* Product Details */}
+                  <div className="flex flex-col flex-grow">
+                    {/* Product Name */}
+                    <div className="truncate w-40 font-semibold text-lg text-gray-900 mb-1">
+                      {item.name}
+                    </div>
+
+                    {/* Product Price */}
+                    <span className="font-semibold text-gray-700">
+                      ${item.price}
+                    </span>
+
+                    {/* Warranty Date Picker */}
+                    <div className="rounded-md relative mt-2">
+                      <WarrantyDatePicker
+                        name={`warrantyDate[${index}]`} // Pass the onChange handler to update Formik's values
+                      />
+                    </div>
+
+                    {/* IME Input Field */}
+                    <div className="rounded-md mt-2">
+                      <Field
+                        type="text"
+                        as="textarea"
+                        name={`IME[${index}]`}
+                        className="block w-[56%] h-10 rounded-md border border-gray-300 py-1.5 pl-3 pr-10 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                        placeholder="IME..."
+                      />
+                      {/* Error Message */}
+                      {/* Display error message if touched and error exists */}
+                      {touched.IME && errors.IME && (
+                        <div className="text-red-500">{errors.IME}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Quantity Controls */}
+                  <div className="flex flex-row absolute bottom-0 mb-3 right-0 border">
+                    {/* Decrement Button */}
+                    <div
+                      className="rounded-full rotate-90 mt-2 text-2xl flex items-center justify-center h-8 w-8 mx-2 cursor-pointer bg-red-500 text-white"
+                      onClick={() => decrement(item.id)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 3a.75.75 0 01.75.75V16.25a.75.75 0 01-1.5 0V3.75A.75.75 0 0110 3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Quantity */}
+                    <div className="font-semibold mx-3 text-lg mt-2">
+                      {item.quantity}
+                    </div>
+
+                    {/* Increment Button */}
+                    <div
+                      className="rounded-full flex items-center justify-center mx-3 cursor-pointer bg-blue-500 text-white h-8 w-8 p-2 mt-2"
+                      onClick={() => increment(item.id)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 3a.75.75 0 01.75.75V10h6.25a.75.75 0 010 1.5H10v6.25a.75.75 0 01-1.5 0V11H3.75a.75.75 0 010-1.5H9V3.75A.75.75 0 0110 3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Delete Button */}
+                  <div className="flex items-center absolute top-0 mt-2 right-0 me-2 mb-36 ml-3">
+                    <FaTrash
+                      className="cursor-pointer"
+                      onClick={() => removeCart(item.id)}
+                    />
+                  </div>
                 </div>
-                <div className="rounded-[100px] relative m-[48px_16px_0_0] flex flex-row justify-center p-[0_7.3px_0_7px] grow basis-[25px] box-sizing-border">
-                  <div
-                    className="rounded-[100px] cursor-pointer bg-[#F66A6A] absolute left-[2px] top-[10px] right-[0px] h-[25px] w-[25px]"
-                    onClick={() => decrement(item.id)}
-                  ></div>
-                  <span
-                    className="relative bottom-[15px] break-words cursor-pointer font-['Hind_Kochi'] font-bold text-[30px] text-[#FFFFFF]"
-                    onClick={() => decrement(item.id)}
-                  >
-                    _
-                  </span>
-                </div>
-                <div className="m-[57px_15px_7px_0] inline-block break-words font-['Hind_Kochi'] font-semibold text-[20px] text-[#000000]">
-                  {item.quantity}
-                </div>
-                <div className="rounded-[100px] relative m-[48px_16px_0_0] flex flex-row justify-center p-[0_7.3px_0_7px] grow basis-[25px] box-sizing-border">
-                  <div
-                    className="rounded-[100px] cursor-pointer z-10 border  bg-[#6A99F6] absolute left-[4px] top-[10px] right-[0px] h-[25px] w-[25px]"
-                    onClick={() => increment(item.id)}
-                  ></div>
-                  <span
-                    className="relative  font-['Hind_Kochi'] cursor-pointer z-20  font-bold text-[30px] text-[#FFFFFF]"
-                    onClick={() => increment(item.id)}
-                  >
-                    +
-                  </span>
-                </div>
-                <div className="m-[0_0_8px_0] flex flex-col items-center grow basis-[41px] box-sizing-border">
-                  <FaTrash
-                    onClick={() => removeCart(item.id)}
-                    className="cursor-pointer"
-                  />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
             <div className="m-[0_23px_16px_23px] flex flex-row justify-between w-[calc(100%_-_46px)] box-sizing-border">
               <div>
                 <Field
@@ -332,6 +421,67 @@ const Calu_sale = () => {
                 )}
               </div>
             </div>
+            <div className="rounded-[5px] flex flex-wrap  relative m-[0_23px_15px_23px]">
+              <div className="bg-[#000000] absolute left-[7px] top-[30px] w-[97%] right-[16px] h-[1px]"></div>
+              <div className="m-[0_12.5px_3px_0] inline-block w-[367.5px] break-words font-['Hind_Kochi'] font-normal text-[15px] text-[#000000]">
+                <h3 className="font-semibold">Sale Details</h3>
+              </div>
+              <div className="">
+                <div
+                  onClick={handleAddAnswerValue}
+                  className="bg-blue-500 ms-7 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded"
+                >
+                  <IoIosAddCircle />
+                </div>
+              </div>
+            </div>
+            {/* <div className="">
+              {IME.map((_, index) => (
+                <div className="flex flex-wrap ">
+                  <div className="rounded-[5px]  relative m-[0_0px_15px_23px] ">
+                    <div>
+                      <WarrantyDatePicker
+                        name={`warrantyDate[${index}]`}// Pass the onChange handler to update Formik's values
+                      />
+                    </div>
+                  </div>
+                  <div className="rounded-[5px] w-[38%] relative m-[0_0px_15px_23px] ">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveAnswerValue(index)}
+                      class="text-white w-5 h-5 absolute left-[178px] top-1 bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-1 text-center inline-flex items-center mr-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      <span class="sr-only">Icon description</span>
+                    </button>
+                    <div>
+                      <Field
+                        type="text"
+                        name={`IME[${index}]`}
+                        class=" block w-full h-9 rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
+                        placeholder="Ime...?"
+                      />
+                      {touched.IME && errors.IME && (
+                        <div className="text-red-500">{errors.IME}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div> */}
             {/* <div className="rounded-[5px]  relative m-[0_23px_15px_23px] ">
               <div>
                 <Field
@@ -352,7 +502,7 @@ const Calu_sale = () => {
               <div className="bg-[#000000] absolute left-[7px] right-[16px] bottom-[39px] h-[1px]"></div>
               <div className="m-[0_0_4px_0] flex flex-row justify-between w-[100%] box-sizing-border">
                 <div className="m-[0_12.5px_3px_0] inline-block w-[367.5px] break-words font-['Hind_Kochi'] font-normal text-[15px] text-[#000000]">
-                   Sub Total :
+                  Sub Total :
                 </div>
                 <div className="relative m-[3px_0_0_0] inline-block break-words font-['Hind_Kochi'] font-medium text-[15px] text-[#000000]">
                   ${(totalPrice || 0).toFixed(2)}
@@ -377,26 +527,56 @@ const Calu_sale = () => {
             </div>
             <div className="m-[0_21px_0_23px] flex flex-row justify-between w-[calc(100%_-_44px)] box-sizing-border">
               <div className="">
-              <Invoice
-              code={code}
-              name={customerName}
-              email={email}
-              phone={phone}
-              product={products}
-              totalPrice={totalPrice}
-              finalPrice={finalPrice}
-              totalDiscount={totalDiscount}
-            />
-      
+                <Invoice
+                  code={code}
+                  name={customerName}
+                  email={email}
+                  phone={phone}
+                  warrantyDate={warrantyDate}
+                  product={products}
+                  totalPrice={totalPrice}
+                  finalPrice={finalPrice}
+                  totalDiscount={totalDiscount}
+                />
               </div>
-
             </div>
           </Form>
         )}
       </Formik>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };
 
+const WarrantyDatePicker = ({ name }) => {
+  const { setFieldValue, touched, errors } = useFormikContext(); // Access Formik's context
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    const formattedDate = format(date, "dd-MM-yyyy");
+
+    setFieldValue(name, formattedDate); // Update Formik's values with the selected date
+  };
+
+  return (
+    <div className="mt-3">
+      <DatePicker
+        placeholderText="Warranty date...?"
+        id={name}
+        name={name}
+        selected={selectedDate}
+        onChange={handleDateChange}
+        className="rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+        dateFormat="dd-MM-yyyy" // Only show day, month, and year
+        showYearDropdown
+        scrollableYearDropdown
+        yearDropdownItemNumber={15} // Change the number of years displayed in the year dropdown
+      />
+      {touched[name] && errors[name] && (
+        <div className="text-red-500">{errors[name]}</div>
+      )}
+    </div>
+  );
+};
 export default Calu_sale;

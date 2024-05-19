@@ -99,7 +99,7 @@ const Card = () => {
             <div className="flex gap-2">
               <div>
                 <div className="text-[14px] mx-3 my-3 text-white font-bold absolute  font-['Inter']">
-                  ${total?.data?.total}
+                  ${total?.data?.total || 0}
                 </div>
                 <h3 className="absolute mt-11 mx-3 text-[18px]  text-white text-base font-bold font-['Inter']">
                   Total Sold
@@ -117,7 +117,7 @@ const Card = () => {
             <div className="flex gap-2">
               <div>
                 <div className="text-[14px] mx-3 my-3 text-white font-bold absolute  font-['Inter']">
-                  ${daily?.data?.daily}
+                ${daily?.data?.daily || 0}
                 </div>
                 <h3 className="absolute mt-11 mx-3 text-[18px]  text-white text-base font-bold font-['Inter']">
                   Daily Sold
@@ -143,11 +143,6 @@ const Card = () => {
             <div className="sunnry">
               <Sunnry />
             </div>
-          </div>
-        </div>
-        <div className="bg-[#D9D9D9] w-[97%] mt-1 rounded">
-          <div className="mt-3">
-            {/* <Transaction /> */}
           </div>
         </div>
       </div>
