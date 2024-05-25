@@ -54,7 +54,7 @@ export default function Invoice({
       console.error("Error while generating PDF:", error);
     }
   };
-   console.log(warrantyDate)
+  console.log(warrantyDate);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -69,12 +69,12 @@ export default function Invoice({
   const dispatch = useDispatch();
   const deleteAllCart = () => {
     dispatch(removeAllCart());
-    window.location.href = '/sales';
+    window.location.href = "/sales";
   };
   return (
     <>
       <button onClick={() => setIsModalVisible(true)}>
-        <div className="bg-blue-600 hover:bg-blue-300-700 text-white font-bold py-2 px-4 rounded">
+        <div className="bg-blue-600 hover:bg-blue-300-700  text-white font-bold py-2 px-4 rounded">
           Payment
         </div>
       </button>
@@ -82,7 +82,10 @@ export default function Invoice({
       {isModalVisible && code === "200" && (
         <div
           className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
-          onClick={() => setIsModalVisible(false)}
+          onClick={() => {
+            setIsModalVisible(false);
+            deleteAllCart();
+          }}
         >
           <div
             className="bg-white relative rounded-lg w-[50%] shadow-lg px-1 py-1"
@@ -129,9 +132,7 @@ export default function Invoice({
                 <div class="mb-4">
                   <div class="text-sm text-gray-500">Shop Information:</div>
                   <div class="font-bold">ហាងលក់ទូរស័ព្ទដៃ ចេក​ ស្រីណុច</div>
-                  <div class="text-gray-600">
-                     ត្រាំ,ដូនកែវ,តាកែវ
-                  </div>
+                  <div class="text-gray-600">ត្រាំ,ដូនកែវ,តាកែវ</div>
                   <div class="text-gray-600">Phone: 0966986560</div>
                   <div class="text-gray-600">Email: Nganvidy@gmail.com</div>
                 </div>
@@ -186,7 +187,6 @@ export default function Invoice({
                                 ${item.price}
                               </div>
                             </td>
-                            
                           </tr>
                         ))}
                       </tbody>
@@ -196,9 +196,7 @@ export default function Invoice({
                 <div class="mb-1">
                   <div class="flex justify-between">
                     <div class="text-gray-700 font-bold">Warranty Date:</div>
-                    <div class="font-bold me-5">
-                      {warrantyDate[0]}
-                    </div>
+                    <div class="font-bold me-5">{warrantyDate[0]}</div>
                   </div>
                 </div>
                 <hr />

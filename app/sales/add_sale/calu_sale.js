@@ -465,7 +465,7 @@ const Calu_sale = () => {
                 </div>
               </div>
             </div>
-            <div className="m-[0_21px_0_23px] flex flex-row justify-between w-[calc(100%_-_44px)] box-sizing-border">
+            <div className="m-[0_21px_0_23px]  flex flex-row justify-between w-[calc(100%_-_44px)] box-sizing-border">
               <div className="">
                 <Invoice
                   code={code}
