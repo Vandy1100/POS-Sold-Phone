@@ -27,6 +27,11 @@ export const requestReportApiSlice = apiSlice.injectEndpoints({
         keepUnusedDataFor: 5,
         providesTags: ["requestReport"],
       }),
+      getRequestTopSale: builder.query({
+        query: () => `/reports/top-sale`,
+        keepUnusedDataFor: 5,
+        providesTags: ["requestReport"],
+      }),
   }),
 });
 
@@ -35,5 +40,6 @@ export const {
    useGetRequestReportsPieChartQuery,
    useGetRequestReportsDailyQuery,
    useGetRequestReportsTotalSoldQuery,
-   useGetRequestReportsCustomerQuery
+   useGetRequestReportsCustomerQuery,
+   useGetRequestTopSaleQuery
 } = requestReportApiSlice;

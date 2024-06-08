@@ -8,18 +8,18 @@ import { useCreateRequestAddStockProductMutation } from "@/store/features/produc
 
 export default function AddStockProduct({ id }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [addStockProduct, { isLoading: isUpdating, error: updateError }]= useCreateRequestAddStockProductMutation()
 
   const handleUpdate = async (values) => {
     try {
-      let { productId,quantity } = values;
+      let { productId,quantity,cost } = values;
       let myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       const userData = JSON.stringify({
         productId,
         stockDto: {
           quantity,
+          cost
         },
       });
       const response = await addStockProduct(userData);
@@ -46,6 +46,7 @@ export default function AddStockProduct({ id }) {
   const initialValues = {
     productId:"",
     quantity: "",
+    cost:""
   };
 
   const validationSchema = Yup.object({
@@ -53,15 +54,18 @@ export default function AddStockProduct({ id }) {
       .positive()
       .integer()
       .required("Quantity is required"),
+      cost: Yup.number()
+      .positive()
+      .integer()
+      .required("Cost is required"),
   });
 
   return (
     <>
-      <button onClick={() => setIsModalVisible(true)}>
-        <div className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          <MdOutlineAddShoppingCart />
-        </div>
-      </button>
+
+      <button onClick={() => setIsModalVisible(true)} class="bg-green-600 hover:bg-green-800 text-white px-4 py-2 rounded">
+              Add Stock
+            </button>
 
       {isModalVisible && (
         <div
@@ -127,6 +131,23 @@ export default function AddStockProduct({ id }) {
                     />
                      {touched.quantity && errors.quantity && (
                       <div className="text-red-500">{errors.quantity}</div>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="stock"
+                      className="block text-gray-700 font-bold mb-2"
+                    >
+                      Cost
+                    </label>
+                    <Field
+                      type="number"
+                      id="cost"
+                      name="cost"
+                      className="bg-gray-50 border border-teal-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
+                    />
+                     {touched.cost && errors.cost && (
+                      <div className="text-red-500">{errors.cost}</div>
                     )}
                   </div>
 

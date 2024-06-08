@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -14,10 +15,12 @@ export default function UpadteProduct({ id }) {
   const { data: productData, isLoading } = useGetRequestProductByIdQuery(id);
   const [updateProduct] = useUpdateRequestProductMutation();
   const [idp, setIdp] = useState(0);
-  useEffect(() => setIdp(id), []);
+  useEffect(() => setIdp(id), [id]);
   const handleUpdateProduct = async (id, product) => {
     try {
+
       const response = await updateProduct({ id, product });
+      console.log("hik",response)
       if (response.data) {
         // Successful response
         notify();
@@ -67,11 +70,10 @@ export default function UpadteProduct({ id }) {
 
   return (
     <>
-      <button onClick={() => setIsModalVisible(true)}>
-        <div className="bg-yellow-400 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-          <MdEditSquare />
-        </div>
-      </button>
+
+      <button  onClick={() => setIsModalVisible(true)} class="bg-yellow-200 hover:bg-yellow-300 text-white px-4 py-2 rounded">
+              Edit
+            </button>
 
       {isModalVisible && (
         <div

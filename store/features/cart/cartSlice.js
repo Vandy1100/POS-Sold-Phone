@@ -43,9 +43,13 @@ const cartSlice = createSlice({
 
 //set final price for all items in the
     const finalPrice = totalPriceForItem - totalDiscount
+    state.cartItems[itemIndex].itemOfOne = finalPrice
+    state.itemOfOne = state.cartItems.map((item,index)=>{
+      return item.itemOfOne;
+    })
     state.cartItems[itemIndex].finalPrice = finalPrice
     state.finalPrice = state.cartItems.reduce((acc, item) => {
-      console.log("acc", acc);
+      console.log("acc", finalPrice);
       console.log("discount", item.finalPrice);
       return acc + (item.finalPrice || 0);
     }, 0);
@@ -69,12 +73,14 @@ const cartSlice = createSlice({
       state.discount = state.cartItems.reduce((acc, item) => {
         return acc + (item.discount || 0);
       }, 0);      // Recalculate final price for all items in the cart
+      state.itemOfOne = state.cartItems.map((item,index)=>{
+        return item.finalPrice;
+      })
       state.finalPrice = state.cartItems.reduce((acc, item) => acc + item.finalPrice, 0);
     },
     decrementQuantity(state, action) {
       const { id } = action.payload;
       const itemIndex = state.cartItems.findIndex((item) => item.id === id);
-      console.log(itemIndex)
       if (itemIndex !== -1) {
         if (state.cartItems[itemIndex].quantity > 1) {
           state.cartItems[itemIndex].quantity--;
@@ -91,6 +97,9 @@ const cartSlice = createSlice({
         state.totalPrice = state.cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
         // Recalculate total discount for all items in the cart
         state.discount = state.cartItems.reduce((acc, item) => acc + item.discount, 0);
+        state.itemOfOne = state.cartItems.map((item,index)=>{
+          return item.finalPrice;
+        })
         // Recalculate final price for all items in the cart
         state.finalPrice = state.cartItems.reduce((acc, item) => acc + item.finalPrice, 0);
       }
@@ -103,6 +112,7 @@ const cartSlice = createSlice({
         state.discount -= removedItem.discount || 0; // Subtract the discount of the removed item from the total discount
         state.totalPrice -= removedItem.totalPrice || 0;
         state.finalPrice -= removedItem.finalPrice || 0;
+        state.itemOfOne-= removedItem.itemOfOne || 0;
         // state.totalPrice = state.cartItems.reduce((acc, item) => {
         //   return acc - (item.totalPrice || 0);
         // }, 0);
@@ -113,6 +123,7 @@ const cartSlice = createSlice({
       state.discount = 0;
       state.totalPrice = 0;
       state.finalPrice = 0;
+      state.itemOfOne = 0;
     },
     
     // Add other reducers as needed
@@ -122,6 +133,7 @@ export const selectCartItems = (state) => state.cart.cartItems;
 export const selectTotalPrice = (state) => state.cart.totalPrice;
 export const selectTotalDiscount = (state) => state.cart.discount;
 export const selectFinalPrice = (state) => state.cart.finalPrice;
+export const selectItemOfOne = (state) => state.cart.itemOfOne;
 
 
 export const { addToCart, removeFromCart,incrementQuantity,decrementQuantity,removeAllCart } = cartSlice.actions;

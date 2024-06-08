@@ -34,11 +34,13 @@ const Create = () => {
     price: "",
     file: "",
     quantity: "",
+    cost:""
   };
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     quantity: Yup.string().required("Quantity is required"),
     price: Yup.string().required("Price is required"),
+    cost: Yup.string().required("Cost is required"),
     categoryId:Yup.number().positive().integer().required("Category is required"),
   });
 
@@ -56,7 +58,7 @@ const Create = () => {
 
   const postProduct = async (values) => {
     try {
-      let { name, categoryId, price, productImage, quantity } = values;
+      let { name, categoryId, price, productImage, quantity,cost } = values;
       let myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
@@ -64,6 +66,7 @@ const Create = () => {
         productDto: { name, categoryId, price, productImage },
         stockDto: {
           quantity,
+          cost
         },
       });
       const response = await insertProduct(userData);
@@ -160,7 +163,42 @@ const Create = () => {
                     <div className="grid grid-cols-12 mt-5 ml-3">
                       <div className="flex gap-6 ml-20">
                         <div>
-                          <label className="font-mono">QTY</label>
+                          <label className="font-mono">Sale In</label>
+                          <Field
+                            type="text"
+                            name="cost"
+                            id="cost"
+                            class=" block w-96 rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
+                            placeholder="Sale In....?"
+                          />
+                          {touched.cost && errors.cost && (
+                            <div className="text-red-500">
+                              {errors.cost}
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <label className="font-mono">Sale Out</label>
+                          <Field
+                            type="text"
+                            name="price"
+                            id="price"
+                            class=" block w-96 rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
+                            placeholder="Sale Out....?"
+                          />
+                          {touched.price && errors.price && (
+                            <div className="text-red-500">{errors.price}</div>
+                          )}
+                        </div>
+                      </div>
+                      
+                    </div>
+
+
+                    <div className="grid grid-cols-12 mt-5 ml-3">
+                      <div className="flex gap-6 ml-20">
+                        <div>
+                          <label className="font-mono">Qauntity</label>
                           <Field
                             type="text"
                             name="quantity"
@@ -174,21 +212,11 @@ const Create = () => {
                             </div>
                           )}
                         </div>
-                        <div>
-                          <label className="font-mono">Price</label>
-                          <Field
-                            type="text"
-                            name="price"
-                            id="price"
-                            class=" block w-96 rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mt-3"
-                            placeholder="Price....?"
-                          />
-                          {touched.price && errors.price && (
-                            <div className="text-red-500">{errors.price}</div>
-                          )}
-                        </div>
+                       
                       </div>
+                      
                     </div>
+
                     <div className="grid grid-cols-12 mt-5 ml-3">
                       <div className="flex gap-6 ml-20">
                         <div>

@@ -16,6 +16,10 @@ export const requestProductApiSlice = apiSlice.injectEndpoints({
       query: (id) => `/products/${id}`,
       providesTags: ["requestProduct"],
     }),
+    getRequestProductCardById: builder.query({
+      query: (id) => `/products/card/${id}`,
+      providesTags: ["requestProduct"],
+    }),
     createRequestProduct: builder.mutation({
       query: (product) => ({
         url: "/products",
@@ -70,6 +74,7 @@ export const {
   useGetRequestProductsQuery,
   useGetRequestProductStocksQuery,
   useGetRequestProductByIdQuery,
+  useGetRequestProductCardByIdQuery,
   useDeleteRequestProductMutation,
   useUpdateRequestDiscountMutation,
   //   useGetRequestSubjectClientByRouteQuery,

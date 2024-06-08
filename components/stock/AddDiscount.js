@@ -10,7 +10,7 @@ import { useUpdateRequestDiscountMutation } from "@/store/features/product/reque
 export default function AddDiscount({ id }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [idp, setIdp] = useState(0);
-  useEffect(() => setIdp(id), []);
+  useEffect(() => setIdp(id), [id]);
   const initialValues = {
     discount: "",
     endDiscountTime: "",
@@ -33,7 +33,7 @@ export default function AddDiscount({ id }) {
       position: "top-center",
     });
   };
-  
+
 
   const notifyError = () => {
     toast.success("You not set your discount!!", {
@@ -53,6 +53,7 @@ export default function AddDiscount({ id }) {
   const handleUpdateDiscount = async (id, discount) => {
     try {
       const response = await UpdateDiscount({ id, discount });
+      console.log("responde",response)
       if (response?.data?.code == "200") {
         notify();
         setIsModalVisible(false);
@@ -64,14 +65,21 @@ export default function AddDiscount({ id }) {
       // Handle error scenario
     }
   };
+  const handleDiscountChange = (event) => {
+    const value = event.target.value;
+    // Restrict to 2 digits
+    if (value.length <= 2) {
+      event.target.value = value;
+    } else {
+      event.target.value = value.slice(0, 2);
+    }
+  };
 
   return (
     <>
-      <button onClick={() => setIsModalVisible(true)}>
-        <div className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          <MdOutlineDiscount />
-        </div>
-      </button>
+      <button onClick={() => setIsModalVisible(true)} class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">
+              Discount
+            </button>
 
       {isModalVisible && (
         <div
@@ -112,7 +120,7 @@ export default function AddDiscount({ id }) {
               validationSchema={validationSchema}
               onSubmit={(values, { setSubmitting, resetForm }) => {
                 setTimeout(() => {
-                  // alert(JSON.stringify(values, null, 2));
+    
                   setSubmitting(false);
                   handleUpdateDiscount(idp, values).then((resp) => {});
                 }, 400);
@@ -131,6 +139,8 @@ export default function AddDiscount({ id }) {
                       type="number"
                       id="discount"
                       name="discount"
+                      max="99"
+                      onInput={handleDiscountChange}
                       className="bg-gray-50 border border-teal-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
                     />
                     {touched.discount && errors.discount && (

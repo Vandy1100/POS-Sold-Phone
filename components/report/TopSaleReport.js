@@ -4,23 +4,22 @@ import { List, ListItem } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FaRegCalendar } from "react-icons/fa6";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import Link from "next/link";
 import dayjs from 'dayjs'; // Make sure to install dayjs library for date manipulations
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { useGetRequestTopSaleQuery } from "@/store/features/report/RequestReportApi";
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
-export default function LIstReport() {
+export default function TopSaleReport() {
   const {
     data: saleItem,
     isLoading: saleItemIsLoading,
     error: saleItemError,
-  } = useGetRequestSaleItemsQuery();
+  } = useGetRequestTopSaleQuery();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filteredSaleItems, setFilteredSaleItems] = useState([]);
@@ -36,14 +35,14 @@ export default function LIstReport() {
     if (saleItem && saleItem?.data) {
         const filteredItems = saleItem?.data?.filter((item) => {
             if (startDate && endDate) {
-                const saleDate = dayjs(item.saleDate);
+                const saleDate = dayjs(item.productDate);
                 return (
                     saleDate.isSameOrAfter(dayjs(startDate)) && saleDate.isSameOrBefore(dayjs(endDate))
                 );
             }
             else if (search) {
               // Convert both item name and search term to lowercase for case-insensitive comparison
-              const itemName = item.productName.toLowerCase();
+              const itemName = item.name.toLowerCase();
               const searchTerm = search.toLowerCase();
               return itemName.includes(searchTerm);
             }
@@ -119,8 +118,8 @@ const setDateRange = (rangeType) => {
 
   const colunms = [
     {
-      name: "Order",
-      selector: (row) => (row.saleItemId ? "#" + row.saleItemId : "N/A"),
+      name: "NO",
+      selector: (row, index) => index + 1,
       minWidth: "50px",
       maxWidth: "100px"
     },
@@ -135,46 +134,22 @@ const setDateRange = (rangeType) => {
     {
       name: "Product Name",
       selector: (row) =>
-        row.productName ? <div className="w-96">{row.productName}</div> : "N/A",
-        minWidth: "250px",
-        maxWidth: "300px"
+        row.name ? <div className="w-96">{row.name}</div> : "N/A",
+
     },
     {
       name: "Sale Date",
-      selector: (row) => (row.saleDate ? row.saleDate : "N/A"),
+      selector: (row) => (row.productDate ? row.productDate  : "N/A"),
     },
     {
-      name: "Customer Name",
-      selector: (row) => (row.customerName ? row.customerName : "N/A"),
-    },
-    {
-      name: "Cashier Name",
-      selector: (row) =>
-        row.firstname && row.lastname
-          ? row.firstname + " " + row.lastname
-          : "N/A",
-    },
+        name: "Qauntity",
+        selector: (row) => (row.quantity ? row.quantity : "N/A"),
+      },
     {
       name: "Price",
-      selector: (row) => (row.totalAmount ? `$` + row.totalAmount : "N/A"),
-    },
-    {
-      name: "Qauntity",
-      selector: (row) => (row.quantity ? row.quantity : "N/A"),
-    },
-    {
-      name: "Action",
-      selector: (row) => (
-        <div className="flex gap-1 justify-center">
-            <Link href={`/report/${row.saleItemId}`}
-            className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-          >
-                   <MdOutlineRemoveRedEye/>
-          </Link>
-  
-        </div>
-      ),
-    },
+      selector: (row) => (row.price? `$` + row.price : "N/A"),
+    }
+
     
   ];
 
@@ -282,8 +257,6 @@ const setDateRange = (rangeType) => {
 
       <div class="flex gap-4 py-5 justify-end mb-4 me-4">
             <p className="text-[18px]">Total Qauntity: {totalQauntity}</p>
-            <p className="text-[18px]">Total Amount: ${totalPrice}</p>
-            <p className="text-[18px]">Total Profit: ${totalProfit}</p>
           </div>
 
       <div>

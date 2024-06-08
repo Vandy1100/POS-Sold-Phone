@@ -37,6 +37,12 @@ const MainLayout = ({ children }) => {
   const handleDropdownToggleProduct = () => {
     setIsDropdownOpenProduct(!isDropdownOpenProduct);
   };
+  const [isDropdownOpenReport, setIsDropdownOpeneport] = useState(false);
+
+  const handleDropdownToggleReport = () => {
+    setIsDropdownOpeneport(!isDropdownOpenReport);
+  };
+
   const dispatch = useDispatch();
   const router = useRouter()
 
@@ -152,13 +158,27 @@ const [role, setRole] = useState(0);
                 Sale
               </Link>
             </li>
-            <li className="flex items-center gap-[15px] mt-3 cursor-pointer hover:bg-blue-200 hover:text-blue-800 rounded-xl p-2">
+            <li onClick={handleDropdownToggleReport} className="flex items-center gap-[15px] mt-3 cursor-pointer hover:bg-blue-200 hover:text-blue-800 rounded-xl p-2">
               <BiSolidReport className="mr-2" />
-              <Link className=" font-normal flex-1" href="/report">
+              <span className=" font-normal flex-1">
                 Reports
-              </Link>
+              </span>
+              <MdNavigateNext />
+              </li>
+              {isDropdownOpenReport && (
+              <ul className=" z-10 top-full left-0 mt-1 ms-4 w-36">
+                <li className="flex py-2 hover:bg-gray-100">
+                  <BsDot className="mr-1 mt-1"/>
+                  <Link href="/report">Sale Reports</Link>
+                </li>
+                <li className="flex py-2 hover:bg-gray-100">
+                  <BsDot className="mr-1 mt-1"/>
+                  <Link href="/top_sale_report">Top Sale Reports</Link>
+                </li>
+              </ul>
+            )}
               {/* <MdNavigateNext /> */}
-            </li>
+        
             <li className="flex items-center gap-[15px] mt-3 cursor-pointer hover:bg-blue-200 hover:text-blue-800 rounded-xl p-2">
               <IoLogOut className="mr-2" />
               <div onClick={handleLogout}  className=" font-normal flex-1">

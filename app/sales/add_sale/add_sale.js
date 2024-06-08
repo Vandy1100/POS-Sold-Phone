@@ -55,7 +55,7 @@ const Add_sale = () => {
   return (
     <div className="container">
       <div className="bg-[#D9D9D9] border m-2   w-[100%] h-auto p-3 ml-3 rounded">
-        <di>
+        <div>
           <div className="mt-5 justify-between  gap-2 flex ms-1 py-4">
             <div>
               <button className="btn bg-blue-600 p-2 hover:bg-blue-800 rounded font-bold text-white">
@@ -119,7 +119,7 @@ const Add_sale = () => {
               </div>{" "}
             </div>
           </div>
-        </di>
+        </div>
         <div className="mt-2 ml-1 container">
           <div>
             <div

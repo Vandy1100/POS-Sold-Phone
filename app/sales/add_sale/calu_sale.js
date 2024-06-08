@@ -5,6 +5,7 @@ import {
   removeFromCart,
   selectCartItems,
   selectFinalPrice,
+  selectItemOfOne,
   selectTotalDiscount,
   selectTotalPrice,
 } from "@/store/features/cart/cartSlice";
@@ -35,6 +36,8 @@ const Calu_sale = () => {
   const totalPrice = useSelector(selectTotalPrice);
   const totalDiscount = useSelector(selectTotalDiscount);
   const finalPrice = useSelector(selectFinalPrice);
+  const ItemOfOne = useSelector(selectItemOfOne);
+
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [email, setEmail] = useState("");
@@ -119,7 +122,7 @@ const Calu_sale = () => {
   cartItems.forEach((item) => {
     initialValues.productId.push(item.id);
     initialValues.quantity.push(item.quantity);
-    initialValues.unitPrice.push(item.price);
+    initialValues.unitPrice.push(item.itemOfOne);
     initialValues.userId.push(""); // Assuming userId is a string
   });
 
@@ -256,7 +259,7 @@ const Calu_sale = () => {
           cartItems.forEach((item) => {
             updatedValues.productId.push(item.id);
             updatedValues.quantity.push(item.quantity);
-            updatedValues.unitPrice.push(item.price);
+            updatedValues.unitPrice.push(item.itemOfOne);
             updatedValues.userId.push(id); // Assuming userId is a string
           });
 
