@@ -157,7 +157,7 @@ const setDateRange = (rangeType) => {
     <div className="bg-white w-[100%] h-auto shadow-lg mt-4 ml-4">
       <div className="bg-sky-600 w-[100%] p-[15px] mt-5 justify-between  gap-2 flex ms-1 py-4">
       <div className="ml-6  font-bold">
-              <div className="text-white text-2xl ">History</div>
+              <div className="text-white text-2xl ">Top Sale Product</div>
             </div>
             <div className="ml-24">
             <div className="flex align-middle">
