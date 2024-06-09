@@ -20,9 +20,15 @@ export const requestSoldItemApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
       providesTags: ["requestProduct"],
     }),
+    
     getRequestSaleItemById: builder.query({
       query: (id) => `/sale_items/${id}`,
       providesTags: ["requestProduct"],
+    }),
+    getRequestSaleItemsUnitById: builder.query({
+      query: (id) => `/sale_items/unit/${id}`,
+      keepUnusedDataFor: 5,
+      providesTags: ["requestSoldItem"],
     }),
   }),
 });
@@ -31,5 +37,6 @@ export const {
     useCreateRequestSoldItemMutation,
     useGetRequestProductToSalesQuery,
     useGetRequestSaleItemsQuery,
+    useGetRequestSaleItemsUnitByIdQuery,
     useGetRequestSaleItemByIdQuery,
 } = requestSoldItemApiSlice;

@@ -51,10 +51,11 @@ export default function page() {
               <p class="font-bold">Warranty Date :</p>
               <p>{saleItem?.data ? saleItem?.data?.saleDetail?.warrantyDate : "N/A"}</p>
             </div>
-            <div>
+            <div >
               <p class="font-bold">IME:</p>
-              <p>{saleItem?.data ? saleItem?.data?.saleDetail?.ime : "N/A"}</p>
-            </div>
+              <p className=' overflow-hidden overflow-ellipsis whitespace-nowrap'>
+    {saleItem?.data ? saleItem?.data?.saleDetail?.ime : "N/A"}
+  </p>            </div>
           </div>
         </div>
         <div class="w-1/6 absolute right-0 bottom-0 flex flex-col   space-y-2">

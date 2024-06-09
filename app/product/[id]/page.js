@@ -14,6 +14,7 @@ import AddDiscount from "@/components/stock/AddDiscount";
 import UpadteProduct from "@/components/product/UpdateProduct";
 import AccessoryList from "@/components/accessory/AccessoryList";
 import { useGetRequestAccessoriesByIdQuery } from "@/store/features/accessory/RequestAccessoryApi";
+import UnitReport from "@/components/report/UnitReport";
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 dayjs.extend(isSameOrAfter);
@@ -234,6 +235,9 @@ export default function page() {
             <AddStockProduct id={products?.data?.id} />
             <UpadteProduct id={products?.data?.id} />
             <AccessoryList id={products?.data?.id} />
+            <div class="bg-lime-300 hover:bg-lime-600 text-white block text-center px-4 py-2 rounded">
+              <Link href={`/report/unit/${products?.data?.id}`}>Report</Link>
+            </div>
             <div class="bg-red-600 hover:bg-red-800 text-white block text-center px-4 py-2 rounded">
               <Link href={`/product/index_product`}>Back</Link>
             </div>

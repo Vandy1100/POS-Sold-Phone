@@ -111,7 +111,8 @@ const Create = () => {
                               file:null,
                               price:"",
                               quantity:"",
-                              categoryId:0
+                              categoryId:0,
+                              cost:""
                           }
                       })
                     });

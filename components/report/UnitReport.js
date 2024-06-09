@@ -1,35 +1,38 @@
-"use client";
-import { useGetRequestSaleItemsQuery } from "@/store/features/soldItem/RequestSoldItemApi";
-import { List, ListItem } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { IoIosAddCircle } from "react-icons/io";
+import Modal from "../stock/Modal";
 import DataTable from "react-data-table-component";
-import { FaRegCalendar } from "react-icons/fa6";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import Link from "next/link";
+import { MdDelete } from "react-icons/md";
 import dayjs from 'dayjs'; // Make sure to install dayjs library for date manipulations
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { useGetRequestSaleItemsUnitByIdQuery } from "@/store/features/soldItem/RequestSoldItemApi";
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
-export default function LIstReport() {
+export default function UnitReport({id}) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
   const {
     data: saleItem,
     isLoading: saleItemIsLoading,
     error: saleItemError,
-  } = useGetRequestSaleItemsQuery();
+  } = useGetRequestSaleItemsUnitByIdQuery(id);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filteredSaleItems, setFilteredSaleItems] = useState([]);
   const [totalQauntity,setTotalQuantity] = useState(0) 
   const [totalPrice,setTotalPrice] = useState(0) 
-  const [search, setSearch] = useState();
-  const [totalSaleIn,setTotalSaleIn] = useState(0) 
-  const [totalSaleOut,setTotalSaleOut] = useState(0) 
   const [totalProfit,setTotalProfit] = useState(0) 
+  const [search, setSearch] = useState();
   const handleSearch = (event) => {
     setSearch(event.target.value);
   };
@@ -38,15 +41,14 @@ export default function LIstReport() {
     if (saleItem && saleItem?.data) {
         const filteredItems = saleItem?.data?.filter((item) => {
             if (startDate && endDate) {
-                const saleDate = dayjs(item.saleDate);
-                if(saleDate)
+                const saleDate = dayjs(item.productDate);
                 return (
                     saleDate.isSameOrAfter(dayjs(startDate)) && saleDate.isSameOrBefore(dayjs(endDate))
                 );
             }
             else if (search) {
               // Convert both item name and search term to lowercase for case-insensitive comparison
-              const itemName = item.productName.toLowerCase();
+              const itemName = item.name.toLowerCase();
               const searchTerm = search.toLowerCase();
               return itemName.includes(searchTerm);
             }
@@ -54,16 +56,13 @@ export default function LIstReport() {
         });
         setFilteredSaleItems(filteredItems);
         const total = filteredItems.reduce((sum, item) => sum + item.totalAmount, 0);
-      const quantity = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
-      const saleIn = filteredItems.reduce((sum,item)=>sum + (item.cost * item.quantity), 0);
-      const saleOut = filteredItems.reduce((sum,item)=>sum + (item.totalAmount * item.quantity), 0);
+        const quantity = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
+        const final = filteredItems.reduce((sum,item)=>sum + item.totalAmount, 0);
+        const profit = filteredItems.reduce((sum,item)=>sum + (item.totalAmount - (item?.stock?.cost * item.quantity)), 0);
 
-      const profit = filteredItems.reduce((sum,item)=>sum + ((item.totalAmount * item.quantity) - (item.cost * item.quantity)), 0);
-
-      setTotalSaleIn(saleIn);
-      setTotalSaleOut(saleOut);
-      setTotalQuantity(quantity);
-      setTotalProfit(profit)
+        setTotalPrice(final);
+        setTotalQuantity(quantity);
+        setTotalProfit(profit)
     }
 }, [saleItem, startDate, endDate,search]);
 
@@ -123,7 +122,10 @@ const setDateRange = (rangeType) => {
     setEndDate(event.target.value);
   };
 
-  const colunms = [
+
+  
+
+  const colunm = [
     {
       name: "Order",
       selector: (row) => (row.saleItemId ? "#" + row.saleItemId : "N/A"),
@@ -161,35 +163,58 @@ const setDateRange = (rangeType) => {
           : "N/A",
     },
     {
-      name: "Price In",
-      selector: (row) => (row.cost ? `$` + row.cost : "N/A"),
-    },
-    {
-      name: "Price Out",
+      name: "Price",
       selector: (row) => (row.totalAmount ? `$` + row.totalAmount : "N/A"),
     },
     {
       name: "Qauntity",
       selector: (row) => (row.quantity ? row.quantity : "N/A"),
-    },
-    {
-      name: "Action",
-      selector: (row) => (
-        <div className="flex gap-1 justify-center">
-            <Link href={`/report/${row.saleItemId}`}
-            className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-          >
-                   <MdOutlineRemoveRedEye/>
-          </Link>
-  
-        </div>
-      ),
-    },
+    }
     
   ];
 
   return (
-    <div className="bg-white w-[100%] h-auto shadow-lg mt-4 ml-4">
+    <>
+      <button  onClick={() => setIsModalVisible(true)} class="bg-yellow-400 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+              Add Accessory
+            </button>
+
+      {isModalVisible && (
+        <div
+          className="fixed z-50 top-0 left-0 right-0 bottom-0 bg-gray-900 bg-opacity-20 flex justify-center items-center"
+          onClick={() => setIsModalVisible(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-lg px-8 py-6 w-2/3 h-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-900">Add Accessory</h3>
+              <button
+                type="button"
+                className="text-teal-400 hover:text-teal-500 focus:outline-none"
+                onClick={() => setIsModalVisible(false)}
+              >
+                <span className="sr-only">Close</span>
+                <svg
+                  className="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="bg-white w-[100%] h-auto shadow-lg mt-4 ml-4">
       <div className="bg-sky-600 w-[100%] p-[15px] mt-5 justify-between  gap-2 flex ms-1 py-4">
       <div className="ml-6  font-bold">
               <div className="text-white text-2xl ">History</div>
@@ -284,22 +309,24 @@ const setDateRange = (rangeType) => {
 
       <div className="overflow-x-auto">
         {saleItem && saleItem.data ? (
-          <DataTable columns={colunms} data={filteredSaleItems} pagination />
+          <DataTable columns={colunm} data={filteredSaleItems} pagination />
         ) : (
           <p>Data is null.</p>
         )}{" "}
       </div>
 
       <div class="flex gap-4 py-5 justify-end mb-4 me-4">
-      <p className="text-[18px]">Total Qauntity: {totalQauntity}</p>
-        <p className="text-[18px]">Total Sale In: ${totalSaleIn.toFixed(2)}</p>
-        <p className="text-[18px]">Total Sale Out: ${totalSaleOut.toFixed(2)}</p>
-        <p className="text-[18px]">Total Profit: ${totalProfit.toFixed(2)}</p>
+            <p className="text-[18px]">Total Qauntity: {totalQauntity}</p>
           </div>
 
       <div>
         <div></div>
       </div>
     </div>
+
+          </div>
+        </div>
+      )}
+    </>
   );
 }

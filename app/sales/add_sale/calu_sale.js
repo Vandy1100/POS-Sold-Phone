@@ -96,6 +96,7 @@ const Calu_sale = () => {
     quantity: [],
     unitPrice: [],
     userId: [],
+    cost:[],
     IME: [],
     warrantyDate: [],
   };
@@ -124,6 +125,7 @@ const Calu_sale = () => {
     initialValues.quantity.push(item.quantity);
     initialValues.unitPrice.push(item.itemOfOne);
     initialValues.userId.push(""); // Assuming userId is a string
+    initialValues.cost.push(item.cost);
   });
 
   const notify = () => {
@@ -177,6 +179,7 @@ const Calu_sale = () => {
         userId,
         IME,
         warrantyDate,
+        cost
       } = values;
 
       const myHeaders = new Headers();
@@ -189,6 +192,7 @@ const Calu_sale = () => {
         quantity: quantity[index],
         unitPrice: unitPrice[index],
         userId: userId[index],
+        cost:cost[index]
       }));
       const saleDetailDtos = productId.map((id, index) => ({
         productId: id,
@@ -202,9 +206,9 @@ const Calu_sale = () => {
         saleItemDtos,
         saleDetailDtos,
       });
-      console.log('data1',postData)
+      // console.log('data1',postData)
       const response = await createSoldItem(postData);
-      console.log('data2',response)
+      // console.log('data2',response)
       setCode(response?.data?.code);
       if (response?.data?.code == "200") {
         setWarrantyDate([]);
@@ -253,6 +257,7 @@ const Calu_sale = () => {
             quantity: [],
             unitPrice: [],
             userId: [],
+            cost:[]
           };
 
           // Update the arrays in the new object
@@ -261,6 +266,7 @@ const Calu_sale = () => {
             updatedValues.quantity.push(item.quantity);
             updatedValues.unitPrice.push(item.itemOfOne);
             updatedValues.userId.push(id); // Assuming userId is a string
+            updatedValues.cost.push(item.cost);
           });
 
           // console.log("Updated Form Values:", updatedValues.productId);
@@ -269,6 +275,7 @@ const Calu_sale = () => {
           values.quantity = updatedValues.quantity;
           values.userId = updatedValues.userId;
           values.totalAmount = finalPrice;
+          values.cost =updatedValues.cost
           setTimeout(() => {
             // alert(JSON.stringify(values, null, 2));
             setSubmitting(false);

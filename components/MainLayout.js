@@ -175,6 +175,14 @@ const [role, setRole] = useState(0);
                   <BsDot className="mr-1 mt-1"/>
                   <Link href="/top_sale_report">Top Sale Reports</Link>
                 </li>
+                <li className="flex py-2 hover:bg-gray-100">
+                  <BsDot className="mr-1 mt-1"/>
+                  <Link href="/report/sale_in">Sale In Report</Link>
+                </li>
+                <li className="flex py-2 hover:bg-gray-100">
+                  <BsDot className="mr-1 mt-1"/>
+                  <Link href="/report/profit_sale">Profit Sale Report</Link>
+                </li>
               </ul>
             )}
               {/* <MdNavigateNext /> */}

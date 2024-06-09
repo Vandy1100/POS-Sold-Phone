@@ -4,49 +4,47 @@ import { List, ListItem } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { FaRegCalendar } from "react-icons/fa6";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import Link from "next/link";
 import dayjs from 'dayjs'; // Make sure to install dayjs library for date manipulations
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { useGetRequestTopSaleQuery } from "@/store/features/report/RequestReportApi";
+import { useGetRequestProductStocksQuery } from "@/store/features/product/requestProductApi";
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
-export default function LIstReport() {
-  const {
-    data: saleItem,
-    isLoading: saleItemIsLoading,
-    error: saleItemError,
-  } = useGetRequestSaleItemsQuery();
+export default function SaleInReport() {
+    const {
+        data: product_sale_in,
+        isLoading,
+        error,
+      } = useGetRequestProductStocksQuery();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filteredSaleItems, setFilteredSaleItems] = useState([]);
   const [totalQauntity,setTotalQuantity] = useState(0) 
-  const [totalPrice,setTotalPrice] = useState(0) 
-  const [search, setSearch] = useState();
   const [totalSaleIn,setTotalSaleIn] = useState(0) 
   const [totalSaleOut,setTotalSaleOut] = useState(0) 
   const [totalProfit,setTotalProfit] = useState(0) 
+  const [search, setSearch] = useState();
   const handleSearch = (event) => {
     setSearch(event.target.value);
   };
   // Filter sale items based on start and end dates
   useEffect(() => {
-    if (saleItem && saleItem?.data) {
-        const filteredItems = saleItem?.data?.filter((item) => {
+    if (product_sale_in && product_sale_in?.data) {
+        const filteredItems = product_sale_in?.data?.filter((item) => {
             if (startDate && endDate) {
-                const saleDate = dayjs(item.saleDate);
-                if(saleDate)
+                const saleDate = dayjs(item.productDate);
                 return (
                     saleDate.isSameOrAfter(dayjs(startDate)) && saleDate.isSameOrBefore(dayjs(endDate))
                 );
             }
             else if (search) {
               // Convert both item name and search term to lowercase for case-insensitive comparison
-              const itemName = item.productName.toLowerCase();
+              const itemName = item.name.toLowerCase();
               const searchTerm = search.toLowerCase();
               return itemName.includes(searchTerm);
             }
@@ -54,18 +52,18 @@ export default function LIstReport() {
         });
         setFilteredSaleItems(filteredItems);
         const total = filteredItems.reduce((sum, item) => sum + item.totalAmount, 0);
-      const quantity = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
-      const saleIn = filteredItems.reduce((sum,item)=>sum + (item.cost * item.quantity), 0);
-      const saleOut = filteredItems.reduce((sum,item)=>sum + (item.totalAmount * item.quantity), 0);
+        const quantity = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
+        const saleIn = filteredItems.reduce((sum,item)=>sum + (item.stocks[0].cost * item.quantity), 0);
+        const saleOut = filteredItems.reduce((sum,item)=>sum + (item.price * item.quantity), 0);
 
-      const profit = filteredItems.reduce((sum,item)=>sum + ((item.totalAmount * item.quantity) - (item.cost * item.quantity)), 0);
+        const profit = filteredItems.reduce((sum,item)=>sum + (item.totalAmount - (item?.stock?.cost * item.quantity)), 0);
 
-      setTotalSaleIn(saleIn);
-      setTotalSaleOut(saleOut);
-      setTotalQuantity(quantity);
-      setTotalProfit(profit)
+        setTotalSaleIn(saleIn);
+        setTotalSaleOut(saleOut);
+        setTotalQuantity(quantity);
+        setTotalProfit(profit)
     }
-}, [saleItem, startDate, endDate,search]);
+}, [product_sale_in, startDate, endDate,search]);
 
 
 
@@ -125,8 +123,8 @@ const setDateRange = (rangeType) => {
 
   const colunms = [
     {
-      name: "Order",
-      selector: (row) => (row.saleItemId ? "#" + row.saleItemId : "N/A"),
+      name: "NO",
+      selector: (row, index) => index + 1,
       minWidth: "50px",
       maxWidth: "100px"
     },
@@ -141,50 +139,26 @@ const setDateRange = (rangeType) => {
     {
       name: "Product Name",
       selector: (row) =>
-        row.productName ? <div className="w-96">{row.productName}</div> : "N/A",
-        minWidth: "250px",
-        maxWidth: "300px"
+        row.name ? <div className="w-96">{row.name}</div> : "N/A",
+
     },
     {
       name: "Sale Date",
-      selector: (row) => (row.saleDate ? row.saleDate : "N/A"),
+      selector: (row) => (row.productDate ? row.productDate  : "N/A"),
     },
     {
-      name: "Customer Name",
-      selector: (row) => (row.customerName ? row.customerName : "N/A"),
-    },
-    {
-      name: "Cashier Name",
-      selector: (row) =>
-        row.firstname && row.lastname
-          ? row.firstname + " " + row.lastname
-          : "N/A",
-    },
+        name: "Qauntity",
+        selector: (row) => (row.quantity ? row.quantity : "N/A"),
+      },
     {
       name: "Price In",
-      selector: (row) => (row.cost ? `$` + row.cost : "N/A"),
+      selector: (row) => (row.stocks? `$` + row.stocks[0].cost : "N/A"),
     },
     {
-      name: "Price Out",
-      selector: (row) => (row.totalAmount ? `$` + row.totalAmount : "N/A"),
-    },
-    {
-      name: "Qauntity",
-      selector: (row) => (row.quantity ? row.quantity : "N/A"),
-    },
-    {
-      name: "Action",
-      selector: (row) => (
-        <div className="flex gap-1 justify-center">
-            <Link href={`/report/${row.saleItemId}`}
-            className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-          >
-                   <MdOutlineRemoveRedEye/>
-          </Link>
-  
-        </div>
-      ),
-    },
+        name: "Price Out",
+        selector: (row) => (row.price? `$` + row.price : "N/A"),
+      }
+
     
   ];
 
@@ -192,7 +166,7 @@ const setDateRange = (rangeType) => {
     <div className="bg-white w-[100%] h-auto shadow-lg mt-4 ml-4">
       <div className="bg-sky-600 w-[100%] p-[15px] mt-5 justify-between  gap-2 flex ms-1 py-4">
       <div className="ml-6  font-bold">
-              <div className="text-white text-2xl ">History</div>
+              <div className="text-white text-2xl ">Sale In Report</div>
             </div>
             <div className="ml-24">
             <div className="flex align-middle">
@@ -283,7 +257,7 @@ const setDateRange = (rangeType) => {
           </div>
 
       <div className="overflow-x-auto">
-        {saleItem && saleItem.data ? (
+        {product_sale_in && product_sale_in.data ? (
           <DataTable columns={colunms} data={filteredSaleItems} pagination />
         ) : (
           <p>Data is null.</p>
@@ -291,10 +265,10 @@ const setDateRange = (rangeType) => {
       </div>
 
       <div class="flex gap-4 py-5 justify-end mb-4 me-4">
-      <p className="text-[18px]">Total Qauntity: {totalQauntity}</p>
-        <p className="text-[18px]">Total Sale In: ${totalSaleIn.toFixed(2)}</p>
-        <p className="text-[18px]">Total Sale Out: ${totalSaleOut.toFixed(2)}</p>
-        <p className="text-[18px]">Total Profit: ${totalProfit.toFixed(2)}</p>
+            <p className="text-[18px]">Total Qauntity: {totalQauntity}</p>
+            <p className="text-[18px]">Total Sale In Price: ${totalSaleIn}</p>
+            <p className="text-[18px]">Total Sale Out Price: ${totalSaleOut}</p>
+
           </div>
 
       <div>

@@ -26,9 +26,10 @@ const Add_sale = () => {
         price,
         name,
         discount,
+        cost
       } = selectedProduct;
       console.log(selectedProduct);
-      const productToAdd = { id, image, price, name, discount };
+      const productToAdd = { id, image, price, name, discount, cost };
       dispatch(addToCart(productToAdd));
     }
   };

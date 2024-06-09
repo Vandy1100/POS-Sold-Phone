@@ -10,15 +10,14 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart(state, action) {
-      const { id, name, price, image, discount } = action.payload;
+      const { id, name, price, image, discount,cost } = action.payload;
       let itemIndex = state.cartItems.findIndex((item) => item.id === id);
-      console.log('ff',discount);
       if (itemIndex !== -1) {
         // Item already exists in cart, increase quantity
         state.cartItems[itemIndex].quantity++;
       } else {
         // Item does not exist in cart, add it
-        state.cartItems.push({ id, name, price, discount, image, quantity: 1 });
+        state.cartItems.push({ id, name, price, discount, image,cost, quantity: 1 });
         itemIndex = state.cartItems.length - 1; // Update itemIndex to point to the newly added item
       }
 
